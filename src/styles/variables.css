@@ -1,0 +1,167 @@
+/* =========================================================
+   DESIGN VARIABLES
+   ========================================================= */
+
+:root {
+  /* =======================================================
+     COLORS
+     ======================================================= */
+
+  /* Background */
+  --color-bg-page: #070c1c;
+  --color-bg-card: #1e2031;
+  --color-bg-raised: #2a2c3d;
+
+  /* Text */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a9a9a9;
+  --color-text-disabled: #505261;
+
+  /* Helper colors */
+  --color-red: #ec3013;
+  --color-green: #4ade80;
+  --color-orange: #e27e04;
+
+  /* Tints */
+  --color-tint-white: rgb(255 255 255 / 10%);
+  --color-tint-red: rgb(236 48 19 / 10%);
+  --color-tint-green: rgb(74 222 128 / 10%);
+
+
+  /* =======================================================
+     TYPOGRAPHY
+     ======================================================= */
+
+  /* Font family */
+  --font-family: "Archivo", sans-serif;
+
+  /* Font weights */
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-extrabold: 800;
+
+
+  /* -------------------------------------------------------
+     Display
+     Archivo ExtraBold
+     40px / auto
+     ------------------------------------------------------- */
+
+  --font-display-size: 40px;
+  --font-display-weight: var(--font-weight-extrabold);
+  --font-display-line-height: normal;
+
+
+  /* -------------------------------------------------------
+     H1
+     Archivo ExtraBold
+     24px / auto
+     ------------------------------------------------------- */
+
+  --font-h1-size: 24px;
+  --font-h1-weight: var(--font-weight-extrabold);
+  --font-h1-line-height: normal;
+
+
+  /* -------------------------------------------------------
+     H2
+     Archivo ExtraBold
+     20px / auto
+     ------------------------------------------------------- */
+
+  --font-h2-size: 20px;
+  --font-h2-weight: var(--font-weight-extrabold);
+  --font-h2-line-height: normal;
+
+
+  /* -------------------------------------------------------
+     H3
+     Archivo ExtraBold
+     18px / auto
+     ------------------------------------------------------- */
+
+  --font-h3-size: 18px;
+  --font-h3-weight: var(--font-weight-extrabold);
+  --font-h3-line-height: normal;
+
+
+  /* -------------------------------------------------------
+     Button
+     Archivo ExtraBold
+     14px / auto
+     ------------------------------------------------------- */
+
+  --font-button-size: 14px;
+  --font-button-weight: var(--font-weight-extrabold);
+  --font-button-line-height: normal;
+
+
+  /* -------------------------------------------------------
+     Label / M
+     Archivo SemiBold
+     14px / auto
+     ------------------------------------------------------- */
+
+  --font-label-m-size: 14px;
+  --font-label-m-weight: var(--font-weight-semibold);
+  --font-label-m-line-height: normal;
+
+
+  /* -------------------------------------------------------
+     Label / S
+     Archivo SemiBold
+     12px / auto
+     ------------------------------------------------------- */
+
+  --font-label-s-size: 12px;
+  --font-label-s-weight: var(--font-weight-semibold);
+  --font-label-s-line-height: normal;
+
+
+  /* -------------------------------------------------------
+     Overline
+     Archivo SemiBold
+     12px / auto
+     6% letter spacing
+     Uppercase
+     ------------------------------------------------------- */
+
+  --font-overline-size: 12px;
+  --font-overline-weight: var(--font-weight-semibold);
+  --font-overline-line-height: normal;
+  --font-overline-letter-spacing: 0.06em;
+  --font-overline-transform: uppercase;
+
+
+  /* -------------------------------------------------------
+     Body / L
+     Archivo Regular
+     16px / 130%
+     ------------------------------------------------------- */
+
+  --font-body-l-size: 16px;
+  --font-body-l-weight: var(--font-weight-regular);
+  --font-body-l-line-height: 130%;
+
+
+  /* -------------------------------------------------------
+     Body / M
+     Archivo Regular
+     14px / 130%
+     ------------------------------------------------------- */
+
+  --font-body-m-size: 14px;
+  --font-body-m-weight: var(--font-weight-regular);
+  --font-body-m-line-height: 130%;
+
+
+  /* -------------------------------------------------------
+     Body / S
+     Archivo Regular
+     12px / 130%
+     ------------------------------------------------------- */
+
+  --font-body-s-size: 12px;
+  --font-body-s-weight: var(--font-weight-regular);
+  --font-body-s-line-height: 130%;
+}
