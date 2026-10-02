@@ -15,28 +15,138 @@ body {
 
 @import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap');
 
+/* Display */
 .text-display {
+  font-family: var(--font-family);
   font-size: var(--font-display-size);
   font-weight: var(--font-display-weight);
   line-height: var(--font-display-line-height);
 }
 
+
+/* H1 */
 .text-h1 {
+  font-family: var(--font-family);
   font-size: var(--font-h1-size);
   font-weight: var(--font-h1-weight);
   line-height: var(--font-h1-line-height);
 }
 
-.text-body-m {
-  font-size: var(--font-body-m-size);
-  font-weight: var(--font-body-m-weight);
-  line-height: var(--font-body-m-line-height);
+/* H2 */
+.text-h2 {
+  font-family: var(--font-family);
+  font-size: var(--font-h2-size);
+  font-weight: var(--font-h2-weight);
+  line-height: var(--font-h2-line-height);
 }
 
+/* H3 */
+.text-h3 {
+  font-family: var(--font-family);
+  font-size: var(--font-h3-size);
+  font-weight: var(--font-h3-weight);
+  line-height: var(--font-h3-line-height);
+}
+
+
+/* Button */
+.text-button {
+  font-family: var(--font-family);
+  font-size: var(--font-button-size);
+  font-weight: var(--font-button-weight);
+  line-height: var(--font-button-line-height);
+}
+
+/* Label / M */
+.text-label-m {
+  font-family: var(--font-family);
+  font-size: var(--font-label-m-size);
+  font-weight: var(--font-label-m-weight);
+  line-height: var(--font-label-m-line-height);
+}
+
+/* Label / S */
+.text-label-s {
+  font-family: var(--font-family);
+  font-size: var(--font-label-s-size);
+  font-weight: var(--font-label-s-weight);
+  line-height: var(--font-label-s-line-height);
+}
+
+
+/* Overline */
 .text-overline {
+  font-family: var(--font-family);
   font-size: var(--font-overline-size);
   font-weight: var(--font-overline-weight);
   line-height: var(--font-overline-line-height);
   letter-spacing: var(--font-overline-letter-spacing);
   text-transform: var(--font-overline-transform);
+}
+
+/* Body / L */
+.text-body-l {
+  font-family: var(--font-family);
+  font-size: var(--font-body-l-size);
+  font-weight: var(--font-body-l-weight);
+  line-height: var(--font-body-l-line-height);
+}
+
+/* Body / M */
+.text-body-m {
+  font-family: var(--font-family);
+  font-size: var(--font-body-m-size);
+  font-weight: var(--font-body-m-weight);
+  line-height: var(--font-body-m-line-height);
+}
+
+/* Body / S */
+.text-body-s {
+  font-family: var(--font-family);
+  font-size: var(--font-body-s-size);
+  font-weight: var(--font-body-s-weight);
+  line-height: var(--font-body-s-line-height);
+}
+
+
+/* buttons */
+.btn-red, .btn-white, .btn-gray {
+  border: 0;
+  border-radius: var(--radius-round);
+  padding: 13px 22px;
+  height: 41px;
+  
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  cursor: pointer;
+}
+.btn-red {
+  background: var(--color-red);
+  color: var(--color-text-primary);
+}
+.btn-white {
+  background: var(--color-text-primary);
+  color: var(--color-bg-page);
+}
+.btn-gray {
+  background: var(--color-tint-white);
+  color: var(--color-text-primary);
+}
+
+/* badges */
+.badge-red, .badge-gray {
+  padding: 6px 12px;
+  border-radius: var(--radius-round);
+  display: flex;
+  align-items: center;
+}
+.badge-red {
+  background: var(--color-tint-red);
+  color: var(--color-red);
+}
+.badge-gray {
+  background: var(--color-tint-white);
+  color: var(--color-text-primary);
 }

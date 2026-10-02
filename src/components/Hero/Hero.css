@@ -1,0 +1,224 @@
+.site-hero {
+    position: relative;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 760px;
+
+    overflow: hidden;
+
+    background-color: var(--color-bg-page);
+}
+
+/* Background
+-------------------------------------------------- */
+
+.hero-background {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+}
+
+/* Overlay
+-------------------------------------------------- */
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    background: linear-gradient(
+        270deg,
+        rgb(0 0 0 / 8%) 0%,
+        rgb(0 0 0 / 80%) 100%
+    );
+}
+
+/* Content
+-------------------------------------------------- */
+
+.hero-content {
+    position: absolute;
+    top: 282px;
+    left: 67px;
+    z-index: 2;
+    
+    width: 568px;
+}
+
+
+.hero-premiere {
+    display: inline !important;
+}
+
+.hero-title {
+    margin: 16px 0 24px;
+}
+
+.badge-holder {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.description {
+    margin: 24px 0;
+    padding-right: 24px;
+}
+
+.button-holder {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Carousel
+-------------------------------------------------- */
+
+.carousel-nav {
+    position: absolute;
+    right: 67px;
+    bottom: 54px;
+    left: 67px;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+/* Pagination */
+
+.pagination {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination-item {
+    flex: 1;
+
+    height: 3px;
+    padding: 0;
+
+    border: 0;
+    border-radius: var(--radius-round);
+
+    background: var(--color-text-primary);
+    opacity: 0.5;
+
+    cursor: pointer;
+
+    transition:
+        background-color 300ms ease-out,
+        opacity 300ms ease-out;
+}
+
+.pagination-item.active {
+    background: var(--color-red);
+    opacity: 1;
+}
+
+.pagination-item:hover {
+    opacity: 1;
+}
+
+/* Arrows */
+
+.arrow-box {
+    display: flex;
+    gap: 12px;
+}
+
+.arrow-frame {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 54px;
+    height: 54px;
+    padding: 0;
+
+    border: 0;
+    border-radius: var(--radius-round);
+
+    background: rgb(7 12 28 / 20%);
+    color: var(--color-text-primary);
+
+    cursor: pointer;
+
+    transition:
+        background-color 300ms ease-out,
+        box-shadow 300ms ease-out;
+}
+
+.arrow-frame:hover {
+    background: var(--color-bg-page);
+    box-shadow: 0 2px 8px 0 var(--shadow);
+}
+
+.arrow-frame:focus-visible,
+.pagination-item:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 3px;
+}
+
+.arrow-frame:active {
+    transform: scale(0.96);
+}
+
+.arrow-frame svg {
+    width: 24px;
+    height: 24px;
+}
+
+.arrow-next {
+    transform: rotate(180deg);
+}
+/* Slide transition
+-------------------------------------------------- */
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+}
+
+.hero-slide-previous {
+    z-index: 0;
+
+    animation: hero-slide-out 500ms ease-out forwards;
+}
+
+.hero-slide-current {
+    z-index: 0;
+
+    animation: hero-slide-in 500ms ease-out forwards;
+}
+
+@keyframes hero-slide-out {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes hero-slide-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

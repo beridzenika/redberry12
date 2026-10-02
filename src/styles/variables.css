@@ -164,4 +164,10 @@
   --font-body-s-size: 12px;
   --font-body-s-weight: var(--font-weight-regular);
   --font-body-s-line-height: 130%;
+
+
+
+
+  /* radius */
+  --radius-round: 999px;
 }
