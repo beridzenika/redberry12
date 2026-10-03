@@ -48,6 +48,9 @@
     top: 282px;
     left: 67px;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     
     width: 568px;
 }
@@ -55,10 +58,6 @@
 
 .hero-premiere {
     display: inline !important;
-}
-
-.hero-title {
-    margin: 16px 0 24px;
 }
 
 .badge-holder {

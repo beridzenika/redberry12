@@ -13,6 +13,10 @@ body {
   font-family: var(--font-family);
 }
 
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+}
+
 /* typhography */
 
 @import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap');
@@ -110,6 +114,14 @@ body {
   line-height: var(--font-body-s-line-height);
 }
 
+/* text color */
+.text-gray {
+    color: var(--color-text-secondary);
+}
+
+.text-red {
+    color: var(--color-red);
+}
 
 /* buttons */
 .btn-red, .btn-white, .btn-gray, .btn-border {
@@ -148,6 +160,7 @@ body {
   border-radius: var(--radius-round);
   display: flex;
   align-items: center;
+  gap: 4px;
 }
 .badge-red {
   background: var(--color-tint-red);
@@ -160,4 +173,13 @@ body {
 
 .badge-s {
   padding: 4px 8px;
+}
+
+/* line */
+.page-line {
+    width: 100%;
+    height: 1px;
+    margin: 0;
+    border: 0;
+    background: var(--color-bg-raised);
 }

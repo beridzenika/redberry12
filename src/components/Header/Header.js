@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
-import { ReactComponent as SearchIcon } from "../../assets/icons/MagnifyingGlass.svg";
+
+import SearchTab from "../Search/SearchTab";
+
 import "./Header.css";
 
 
@@ -24,10 +26,8 @@ function Header() {
       </nav>
 
       <div className="header-actions">
-        <button className="search-tab">
-          <SearchIcon/>
-          <span className="text-body-m">Search films and live events</span>
-        </button>
+        
+        <SearchTab/>
 
         <div className="auth-buttons">
           <button 

@@ -40,7 +40,7 @@ function Hero() {
 
                 return nextIndex;
             });
-        }, 3000);
+        }, 30000);
 
         return () => clearInterval(interval);
     }, [movies, currentIndex]);

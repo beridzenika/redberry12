@@ -4,7 +4,7 @@ import "./Footer.css";
 function Footer() {
     return (
         <footer className="site-footer">
-            <hr className="line" />
+            <hr className="page-line" />
 
             <div className="footer-content">
                 <Link

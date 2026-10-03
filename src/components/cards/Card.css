@@ -127,21 +127,8 @@
     padding-top: 10px;
 }
 
-.text-content h3 {
-    margin: 0;
-}
-
 /* Text
 -------------------------------------------------- */
-
-.text-gray {
-    color: var(--color-text-secondary);
-}
-
-.text-red {
-    color: var(--color-red);
-}
-
 
 .badge-red {
     align-self: flex-start;

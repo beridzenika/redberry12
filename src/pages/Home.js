@@ -10,6 +10,7 @@ function Home() {
             <Section title="NOW PLAYING" to="/sessions">
                 <CardBig />
             </Section>
+            <hr className="page-line" />
             <Section title="COMING SOON..." to="/sessions">
                 <CardMedium />
             </Section>
