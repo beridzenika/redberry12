@@ -1,27 +1,34 @@
 import { useCallback } from "react";
 
 import { useMovies } from "../../hooks/useMovies";
+import { formatReleaseDate } from "../../utils/dateUtils";
+
+import { ReactComponent as NotifyIcon } from "../../assets/icons/Notify.svg";
 
 import "./Card.css";
 
-function CardBig() {
-    const { movies: cards, loading, error } = useMovies("now-playing");
+function CardMedium() {
+    const { movies: cards, loading, error } = useMovies("coming-soon");
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <div className="card-row card-big-row">
+        <div className="card-row card-mid-row">
             {cards.map((card) => (
-                <article className="card-big card" key={card.id}>
+                <article className="card-medium card" key={card.id}>
                     <div
-                        className="card-poster big-poster"
+                        className="card-poster medium-poster"
                         style={{
                             backgroundImage: `url(${card.posterUrl})`,
                         }}
                     />
 
                     <div className="text-content">
+                        <span className="text-label-s text-red">
+                            IN CINEMAS {formatReleaseDate(card.releaseDate)}
+                        </span>
+
                         <h3 className="text-h2">
                             {card.title}
                         </h3>
@@ -35,20 +42,13 @@ function CardBig() {
                             {card.ageRating?.code}
                         </span>
 
-                        <p className="text-body-m text-gray description">
-                            {card.synopsis}
-                        </p>
-
                         <div className="card-footer">
-                            <span className="text-button">
-                                From ₾ {card.fromPrice}
-                            </span>
-
                             <button
-                                className="btn-red text-button"
+                                className="btn-border text-button"
                                 type="button"
                             >
-                                Buy Ticket
+                                <NotifyIcon/>
+                                Notify Me
                             </button>
                         </div>
                     </div>
@@ -56,6 +56,6 @@ function CardBig() {
             ))}
         </div>
     );
-}
+};
 
-export default CardBig;
+export default CardMedium;

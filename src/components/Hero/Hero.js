@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useFetch } from "../../hooks/useFetch";
-import { fetchData } from "../../services/api";
+import { useMovies } from "../../hooks/useMovies";
 
 import { ReactComponent as ArrowIcon } from "../../assets/icons/Arrow.svg";
 
@@ -9,13 +8,7 @@ import "./Hero.css";
 import HeroSlide from "./HeroSlide";
 
 function Hero() {
-    const fetchFeaturedMovies = useCallback(
-        () => fetchData("movies/featured"),
-        []
-    );
-
-    const { data, loading, error } = useFetch(fetchFeaturedMovies);
-    const movies = data?.data;
+    const { movies, loading, error } = useMovies("featured");
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [previousIndex, setPreviousIndex] = useState(null);

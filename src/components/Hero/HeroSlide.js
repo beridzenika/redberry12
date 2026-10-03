@@ -1,15 +1,10 @@
+import { formatPremiereDate } from "../../utils/dateUtils";
+
 import { ReactComponent as TimerIcon } from "../../assets/icons/Timer.svg";
 import { ReactComponent as TicketIcon } from "../../assets/icons/Ticket.svg";
 
 function HeroSlide({ movie, className }) {
-    const releaseDate = new Date(movie.releaseDate);
-
-    const formattedDate = releaseDate.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-    });
-
+    
     return (
         <div className={`hero-slide ${className}`}>
             {/* Background */}
@@ -28,7 +23,7 @@ function HeroSlide({ movie, className }) {
                 <span className="badge-red text-label-s hero-premiere">
                     {movie.isComingSoon
                         ? "COMING SOON"
-                        : `PREMIERE · ${formattedDate}`}
+                        : `PREMIERE · ${formatPremiereDate(movie.releaseDate)}`}
                 </span>
 
                 <h1 className="text-display hero-title">

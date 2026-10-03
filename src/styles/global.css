@@ -112,7 +112,7 @@ body {
 
 
 /* buttons */
-.btn-red, .btn-white, .btn-gray {
+.btn-red, .btn-white, .btn-gray, .btn-border {
   border: 0;
   border-radius: var(--radius-round);
   padding: 13px 22px;
@@ -134,6 +134,11 @@ body {
 }
 .btn-gray {
   background: var(--color-tint-white);
+  color: var(--color-text-primary);
+}
+.btn-border {
+  background: none;
+  border: 1px solid var(--color-text-secondary);
   color: var(--color-text-primary);
 }
 

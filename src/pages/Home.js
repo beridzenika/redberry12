@@ -1,7 +1,7 @@
 import Hero from "../components/Hero/Hero";
 import Section from "../components/Section/Section";
 import CardBig from "../components/cards/CardBig";
-
+import CardMedium from "../components/cards/CardMedium";
 
 function Home() {
   return (
@@ -9,6 +9,9 @@ function Home() {
             <Hero/>
             <Section title="NOW PLAYING" to="/sessions">
                 <CardBig />
+            </Section>
+            <Section title="COMING SOON..." to="/sessions">
+                <CardMedium />
             </Section>
         </main>
     );
