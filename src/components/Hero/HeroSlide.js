@@ -56,7 +56,7 @@ function HeroSlide({ movie, className }) {
                 </div>
 
                 <p className="description text-body-l">
-                    {movie.description || "No description available"}
+                    {movie.synopsis || "No description available"}
                 </p>
 
                 <div className="button-holder">

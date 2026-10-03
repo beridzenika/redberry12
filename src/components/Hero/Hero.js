@@ -50,7 +50,7 @@ function Hero() {
         }, 3000);
 
         return () => clearInterval(interval);
-    }, [movies]);
+    }, [movies, currentIndex]);
 
     const handlePrevious = () => {
         changeSlide(
