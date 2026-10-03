@@ -1,0 +1,164 @@
+/* Card Row
+-------------------------------------------------- */
+
+.card-row {
+    position: relative;
+
+    display: flex;
+    gap: 17px;
+
+    overflow: hidden;
+}
+
+/* Fade
+-------------------------------------------------- */
+
+.card-row::after {
+    position: absolute;
+    inset: 0 0 0 auto;
+
+    width: 120px;
+
+    pointer-events: none;
+
+    content: "";
+
+    background: linear-gradient(
+        to right,
+        transparent,
+        var(--color-bg-page)
+    );
+}
+
+/* Card
+-------------------------------------------------- */
+
+.card {
+    padding: 14px;
+
+    border-radius: 20px;
+
+    background: var(--color-bg-card);
+
+    box-shadow: 0 1px 4px var(--shadow);
+}
+
+/* Card Row Layout
+-------------------------------------------------- */
+
+.card-big-row {
+    /*
+     * The row determines how many cards are visible.
+     * No fixed card count is necessary.
+     */
+}
+
+/* Large Card
+-------------------------------------------------- */
+
+.card-big {
+    flex: 0 0 260px;
+
+    width: 22px;
+    height: 452px;
+
+    display: flex;
+    flex-direction: column;
+
+    transition:
+        flex-basis 300ms linear,
+        width 300ms linear;
+}
+
+.card-big:hover {
+    flex-basis: 447px;
+    width: 447px;
+}
+
+/* Poster
+-------------------------------------------------- */
+
+.card-poster {
+    width: 100%;
+
+    border-radius: 14px;
+
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.big-poster {
+    height: 300px;
+    flex-shrink: 0;
+
+    transition: height 300ms linear;
+}
+
+.card-big:hover .big-poster {
+    height: 224px;
+}
+
+/* Text Content
+-------------------------------------------------- */
+
+.text-content {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+    gap: 7px;
+
+    padding-top: 10px;
+}
+
+.text-content h3 {
+    margin: 0;
+}
+
+/* Text
+-------------------------------------------------- */
+
+.text-gray {
+    color: var(--color-text-secondary);
+}
+
+.badge-red {
+    align-self: flex-start;
+}
+
+/* Description
+-------------------------------------------------- */
+
+.description {
+    display: -webkit-box;
+
+    overflow: hidden;
+
+    margin: 0;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+
+    opacity: 1;
+
+    transition: opacity 300ms ease;
+}
+
+.card-big:not(:hover) .description {
+    opacity: 0;
+}
+
+/* Footer
+-------------------------------------------------- */
+
+.card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: auto;
+
+    flex-shrink: 0;
+}

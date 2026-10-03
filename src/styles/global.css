@@ -2,7 +2,9 @@ html,
 body,
 #root {
   margin: 0;
+  padding: 0;
   min-height: 100%;
+  box-sizing: border-box;
 }
 
 body {
@@ -149,4 +151,8 @@ body {
 .badge-gray {
   background: var(--color-tint-white);
   color: var(--color-text-primary);
+}
+
+.badge-s {
+  padding: 4px 8px;
 }

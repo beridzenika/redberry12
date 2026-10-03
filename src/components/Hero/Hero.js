@@ -63,7 +63,6 @@ function Hero() {
     };
 
     if (loading) return <p>Loading...</p>;
-
     if (error) return <p>Error: {error}</p>;
 
     if (!movies || movies.length === 0) {
