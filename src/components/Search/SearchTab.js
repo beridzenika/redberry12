@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import SearchOverlay from "./SearchOverlay";
+import { useDismiss } from "../../hooks/useDismiss";
 
 import { ReactComponent as SearchIcon } from "../../assets/icons/MagnifyingGlass.svg";
 import { ReactComponent as ClearIcon } from "../../assets/icons/Clear.svg";
@@ -12,6 +13,7 @@ function SearchTab() {
     const [query, setQuery] = useState("");
 
     const searchRef = useRef(null);
+    const inputRef = useRef(null);
 
     const handleFocus = () => {
         setIsSearchOpen(true);
@@ -20,23 +22,14 @@ function SearchTab() {
     const handleClose = () => {
         setIsSearchOpen(false);
         setQuery("");
+        inputRef.current?.blur();
     };
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (
-                searchRef.current &&
-                !searchRef.current.contains(event.target)
-            ) {
-                setIsSearchOpen(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
+    useDismiss({
+        ref: searchRef,
+        open: isSearchOpen,
+        onDismiss: handleClose,
+    })
 
     return (
         <div className="search-container" ref={searchRef}>
