@@ -5,6 +5,7 @@ export const ModalContext = createContext();
 export function ModalProvider({children}) {
     const [modals, setModals] = useState({
         login: false,
+        signin: false,
     });
     
     const openModal = useCallback((modalName) => {
@@ -18,6 +19,7 @@ export function ModalProvider({children}) {
     const closeAllModals = useCallback(() => {
         setModals({
             login: false,
+            signin: false,
         });
     }, []);
 

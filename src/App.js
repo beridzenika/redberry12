@@ -3,6 +3,7 @@ import Sessions from "./pages/Sessions";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import LoginModal from "./components/Modals/LoginModal";
+import SigninModal from "./components/Modals/SigninModal";
 
 import { ModalProvider } from "./contexts/ModalContext";
 
@@ -25,6 +26,7 @@ function App() {
         <Footer />
 
         <LoginModal/>
+        <SigninModal/>
       </ModalProvider>
     </div>
   );

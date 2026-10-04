@@ -15,8 +15,6 @@
 }
 
 .modal {
-  width: min(100%, 520px);
-
   background: var(--bg-page, rgba(7, 12, 28, 1));
   border: 1px solid var(--bg-raised, rgba(42, 44, 61, 1));
   border-radius: 28px;

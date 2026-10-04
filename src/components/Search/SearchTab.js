@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import SearchOverlay from "./SearchOverlay";
 import { useDismiss } from "../../hooks/useDismiss";

@@ -34,6 +34,7 @@ function Header() {
                 <button 
                     className="btn-red text-button" 
                     type="button"
+                    onClick={() => openModal("signin")}
                 >
                     Sign up
                 </button>
