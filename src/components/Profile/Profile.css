@@ -4,7 +4,7 @@
     gap: 24px;
 }
 
-.user-profile {
+.profile-user {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -56,4 +56,110 @@
 
 .status-complete {
     background: var(--color-green);
+}
+
+
+.profile-dropdown-container {
+    position: relative;
+}
+
+/* Remove default button styling */
+.profile-dropdown-trigger {
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+/* Dropdown */
+.profile-dropdown {
+    position: absolute;
+
+    top: calc(100% + 5px);
+    right: 0;
+
+    width: 301px;
+    box-sizing: border-box;
+
+    padding: 10px 0;
+
+    border: 1px solid var(--bg-raised, rgba(42, 44, 61, 1));
+    border-radius: 16px;
+
+    background: var(--bg-page, rgba(7, 12, 28, 1));
+
+    box-shadow:
+        0px 20px 48px -8px var(--shadow),
+        0px 2px 6px 0px var(--shadow);
+
+    overflow: hidden;
+
+    z-index: 100;
+}
+
+.profile-open-icon-rotated {
+    transform: rotate(180deg);
+}
+
+/* dropdown content */
+.profile-dropdown .profile-user {
+    margin: 10px 20px 0;
+}
+
+.profile-status-badge {
+    margin: 16px 20px 0;
+    padding: 10px 12px;
+    
+    background-color: var(--color-tint-warning);
+    color: var(--color-orange);
+
+    border-radius: 10px;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.badge-status-complete {
+    background-color: var(--color-tint-green);
+    color: var(--color-green);
+    
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-dropdown-link-holder {
+    margin: 4px 0;
+}
+
+.profile-dropdown-link,
+.profile-dropdown-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 20px;
+}
+
+.profile-dropdown-link {
+    color: var(--color-text-primary);
+    text-decoration: none;
+}
+
+.profile-dropdown-footer {
+    width: 100%;
+
+    border: 0;
+    background: transparent;
+
+    color: var(--color-text-primary);
+    font: inherit;
+    text-align: left;
+
+    cursor: pointer;
 }

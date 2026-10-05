@@ -183,3 +183,15 @@ h1, h2, h3, h4, h5, h6, p {
     border: 0;
     background: var(--color-bg-raised);
 }
+
+
+/* icon colors */
+
+
+.error-icon {
+    color: var(--color-red);
+}
+
+.success-icon {
+    color: var(--color-green);
+}

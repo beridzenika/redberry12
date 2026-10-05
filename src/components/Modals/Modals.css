@@ -140,14 +140,6 @@
     pointer-events: none;
 }
 
-.error-icon {
-    color: var(--color-red);
-}
-
-.success-icon {
-    color: var(--color-green);
-}
-
 /* Password fields */
 
 .password-holder {

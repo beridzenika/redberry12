@@ -3,9 +3,9 @@ import { useModal } from "../../hooks/useModal";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
 import SearchTab from "../Search/SearchTab";
-import ProfileTab from "../Profile/ProfileTab";
 
 import "./Header.css";
+import ProfileDropdown from "../Profile/ProfileDropdown";
 
 
 function Header() {
@@ -51,7 +51,7 @@ function Header() {
                         </button>
                     </div>
                 ) : (
-                    <ProfileTab user={user} />
+                    <ProfileDropdown user={user} />
                 )}
                 
             </div>

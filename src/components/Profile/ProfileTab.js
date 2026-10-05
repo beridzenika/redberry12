@@ -1,24 +1,24 @@
 import { ReactComponent as OpenIcon } from "../../assets/icons/Open.svg";
-import './Profile.css'
+import "./Profile.css";
 
-function ProfileTab({ user }) {
+function ProfileTab({ user, isOpen }) {
     const displayName = user?.username || user?.fullName || "User";
-
     const avatarUrl =
-        user?.avatar &&
-        user.avatar !== "string"
+        user?.avatar && user.avatar !== "string"
             ? user.avatar
             : null;
 
     return (
         <div className="profile-tab">
-            <div className="user-profile">
+            <div className="profile-user">
                 <div className="profile-avatar-wrapper">
                     <div
                         className="profile-avatar"
                         style={
-                            avatarUrl ? { backgroundImage: `url(${avatarUrl})`,} :
-                            undefined}
+                            avatarUrl
+                                ? { backgroundImage: `url(${avatarUrl})` }
+                                : undefined
+                        }
                     >
                         {!avatarUrl && (
                             <span className="text-label-s">
@@ -26,6 +26,7 @@ function ProfileTab({ user }) {
                             </span>
                         )}
                     </div>
+
                     <span
                         className={`profile-status ${
                             user?.profileComplete
@@ -34,12 +35,16 @@ function ProfileTab({ user }) {
                         }`}
                     />
                 </div>
-                <span className="text-label-m">
+
+                <div className="text-label-m">
                     {displayName}
-                </span>    
+                </div>
             </div>
+
             <OpenIcon
-                className="profile-open-icon"
+                className={`profile-open-icon ${
+                    isOpen ? "profile-open-icon-rotated" : ""
+                }`}
                 aria-hidden="true"
             />
         </div>
