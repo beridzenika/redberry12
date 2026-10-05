@@ -1,13 +1,16 @@
 import { Link } from "react-router-dom";
 import { useModal } from "../../hooks/useModal";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 import SearchTab from "../Search/SearchTab";
+import ProfileTab from "../Profile/ProfileTab";
 
 import "./Header.css";
 
 
 function Header() {
     const { openModal } = useModal();
+    const { isAuthenticated, user } = useAuthContext();
 
     return (
         <header className="site-header">
@@ -30,22 +33,27 @@ function Header() {
             <div className="header-actions">
                 <SearchTab/>
 
-                <div className="auth-buttons">
-                <button 
-                    className="btn-red text-button" 
-                    type="button"
-                    onClick={() => openModal("signin")}
-                >
-                    Sign up
-                </button>
-                <button 
-                    className="btn-white text-button" 
-                    type="button"
-                    onClick={() => openModal("login")}
-                >
-                    Log in
-                </button>
-                </div>
+                {!isAuthenticated ? (
+                    <div className="auth-buttons">
+                        <button 
+                            className="btn-red text-button" 
+                            type="button"
+                            onClick={() => openModal("signin")}
+                        >
+                            Sign up
+                        </button>
+                        <button 
+                            className="btn-white text-button" 
+                            type="button"
+                            onClick={() => openModal("login")}
+                        >
+                            Log in
+                        </button>
+                    </div>
+                ) : (
+                    <ProfileTab user={user} />
+                )}
+                
             </div>
         </header>
     );

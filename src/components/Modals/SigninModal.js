@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useModal } from "../../hooks/useModal";
+import { useAuth } from "../../hooks/useAuth";
 import ModalOverlay from "../Modal/ModalOverlay";
 import AuthInput from "./AuthInput";
 
@@ -11,6 +12,10 @@ import "./Modals.css";
 
 function SigninModal() {
     const {modals, openModal, closeModal, } = useModal();
+    const { register, loading, generalError, setGeneralError } 
+        = useAuth();
+
+    const [apiErrors, setApiErrors] = useState({});
 
     const [values, setValues] = useState({
         username: "",
@@ -20,6 +25,8 @@ function SigninModal() {
     });
 
     const [submitted, setSubmitted] = useState(false);
+
+    const [avatarFile, setAvatarFile] = useState(null);
     const [avatarPreview, setAvatarPreview] = useState(null);
 
     const resetForm = () => {
@@ -30,11 +37,20 @@ function SigninModal() {
             confirmPassword: "",
         });
         setSubmitted(false);
+        setApiErrors({});
+        setGeneralError("");
+        setAvatarFile(null);
+        setAvatarPreview((previousUrl) => {
+            if (previousUrl) {
+                URL.revokeObjectURL(previousUrl);
+            }
+            return null;
+        });
     }
+
     const handleClose = () => {
-        closeModal("signin");
-        setAvatarPreview(null);
         resetForm();
+        closeModal("signin");
     };
 
     const handleChange = (event) => {
@@ -44,11 +60,17 @@ function SigninModal() {
             ...prev,
             [name]: value,
         }));
+        setApiErrors((prev) => ({
+            ...prev,
+            [name]: "",
+        }));
+        if(generalError) {
+            setGeneralError("");
+        }
     };
 
     const handleAvatarChange = (event) => {
         const file = event.target.files?.[0];
-
         if (!file) return;
 
         const allowedTypes = [
@@ -61,6 +83,7 @@ function SigninModal() {
             return;
         }
 
+        setAvatarFile(file);
         const previewUrl = URL.createObjectURL(file);
 
         setAvatarPreview((previousUrl) => {
@@ -81,24 +104,26 @@ function SigninModal() {
 
     const errors = {
         username:
-            !values.username
+            apiErrors.username || 
+            (!values.username
                 ? "Username is required"
                 : values.username.length < 3
                     ? "Username must be at least 3 characters"
-                    : "",
-                    // TODO: Unique
+                    : ""),
         email:
-            !values.email
+            apiErrors.email ||
+            (!values.email
                 ? "Email is required"
                 : !/\S+@\S+\.\S+/.test(values.email)
                     ? "Enter a valid email"
-                    : "",
+                    : ""),
         password:
-            !values.password
+            apiErrors.password ||
+            (!values.password
                 ? "Password is required"
                 : values.password.length < 3
                     ? "At least 3 characters"
-                    : "",
+                    : ""),
         confirmPassword:
             !values.confirmPassword
                 ? "Please confirm your password"
@@ -115,10 +140,29 @@ function SigninModal() {
         Boolean(values[field]) &&
         !errors[field];
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         setSubmitted(true);
+        setApiErrors({});
+        
+        if(Object.values(errors).some(Boolean)) {
+            return;
+        }
+        
+        const result = await register(
+            avatarFile, 
+            values.username, 
+            values.email, 
+            values.password,
+            values.confirmPassword,
+        );
+
+        if(!result.success) {
+            setApiErrors(result.fieldErrors || {});
+            return;
+        }
+        handleClose();
     };
 
     return (
@@ -200,6 +244,7 @@ function SigninModal() {
                             type="file"
                             accept="image/jpeg,image/png,image/webp"
                             className="visually-hidden"
+                            disabled={loading}
                             onChange={handleAvatarChange}
                         />
                     </div>
@@ -216,6 +261,7 @@ function SigninModal() {
                         }
                         success={showSuccess("username")}
                         onChange={handleChange}
+                        disabled={loading}
                         autoComplete="username"
                     />
                     <AuthInput
@@ -232,6 +278,7 @@ function SigninModal() {
                         }
                         success={showSuccess("email")}
                         onChange={handleChange}
+                        disabled={loading}
                         autoComplete="email"
                     />
                     <div className="password-holder">
@@ -249,6 +296,7 @@ function SigninModal() {
                             }
                             success={showSuccess("password")}
                             onChange={handleChange}
+                            disabled={loading}
                             autoComplete="new-password"
                         />
                         <AuthInput
@@ -265,19 +313,26 @@ function SigninModal() {
                             }
                             success={showSuccess("confirmPassword")}
                             onChange={handleChange}
+                            disabled={loading}
                             autoComplete="new-password"
                         />
                     </div>
-
+                    {generalError && (
+                        <p
+                            className="text-label-s text-red"
+                            role="alert"
+                        >
+                            {generalError}
+                        </p>
+                    )}
                     <button
                         type="submit"
                         className={`auth-btn text-button ${
-                            submitted
-                                ? "auth-btn-submitted"
-                                : ""
+                            submitted ? "auth-btn-submitted" : ""
                         }`}
+                        disabled={loading}
                     >
-                        Sign up
+                        {loading ? "Signing up..." : "Sign up"}
                     </button>
                 </form>
 

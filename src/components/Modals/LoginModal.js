@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useModal } from "../../hooks/useModal";
+import { useAuth } from "../../hooks/useAuth";
 import ModalOverlay from "../Modal/ModalOverlay";
 import AuthInput from "./AuthInput";
 
@@ -10,6 +11,10 @@ import "./Modals.css";
 
 function LoginModal() {
     const { modals, openModal, closeModal } = useModal();
+    const { login, loading, generalError, setGeneralError } 
+        = useAuth();
+
+    const [apiErrors, setApiErrors] = useState({});
 
     const [values, setValues] = useState({
         email: "",
@@ -23,14 +28,14 @@ function LoginModal() {
             password: "",
         });
         setSubmitted(false);
+        setApiErrors({});
+        setGeneralError("");
     };
 
     const handleClose = () => {
         resetForm();
         closeModal("login");
     };
-
-
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -39,21 +44,31 @@ function LoginModal() {
             ...prev,
             [name]: value,
         }));
+        setApiErrors((prev) => ({
+            ...prev,
+            [name]: "",
+        }));
+        if (generalError) {
+            setGeneralError("");
+        }
     };
 
     const errors = {
         email:
-            !values.email
+            apiErrors.email ||
+            (!values.email
                 ? "Email is required"
                 : !/\S+@\S+\.\S+/.test(values.email)
                     ? "Enter a valid email"
-                    : "",
+                    : ""),
+
         password:
-            !values.password
+            apiErrors.password ||
+            (!values.password
                 ? "Password is required"
                 : values.password.length < 3
                     ? "At least 3 characters"
-                    : "",
+                    : ""),
     };
 
     const showError = (field) =>
@@ -65,9 +80,24 @@ function LoginModal() {
         !errors[field];
 
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+
         setSubmitted(true);
+        setApiErrors({});
+
+        if(Object.values(errors).some(Boolean)) {
+            return;
+        }
+
+        const result = await login(values.email, values.password);
+
+        if (!result.success) {
+            setApiErrors(result.fieldErrors || {});
+            return;
+        }
+
+        handleClose();
     };
 
     return (
@@ -121,6 +151,7 @@ function LoginModal() {
                         }
                         success={showSuccess("email")}
                         onChange={handleChange}
+                        disabled={loading}
                         autoComplete="email"
                     />
 
@@ -138,18 +169,25 @@ function LoginModal() {
                         }
                         success={showSuccess("password")}
                         onChange={handleChange}
+                        disabled={loading}
                         autoComplete="current-password"
                     />
-
+                    {generalError && (
+                        <p
+                            className="text-label-s text-red"
+                            role="alert"
+                        >
+                            {generalError}
+                        </p>
+                    )}
                     <button
                         type="submit"
                         className={`auth-btn text-button ${
-                            submitted
-                                ? "auth-btn-submitted"
-                                : ""
+                            submitted ? "auth-btn-submitted" : ""
                         }`}
+                        disabled={loading}
                     >
-                        Log in
+                        {loading ? "Logging in..." : "Log in"}
                     </button>
                 </form>
 

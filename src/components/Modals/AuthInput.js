@@ -12,9 +12,9 @@ function AuthInput({
     success,
     onChange,
     autoComplete,
+    disabled = {disabled},
 }) {
     const hasError = Boolean(error);
-
     return (
         <div
             className={`auth-input-holder ${
