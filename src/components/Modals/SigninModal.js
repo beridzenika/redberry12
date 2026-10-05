@@ -24,8 +24,6 @@ function SigninModal() {
         confirmPassword: "",
     });
 
-    const [submitted, setSubmitted] = useState(false);
-
     const [avatarFile, setAvatarFile] = useState(null);
     const [avatarPreview, setAvatarPreview] = useState(null);
 
@@ -36,7 +34,6 @@ function SigninModal() {
             password: "",
             confirmPassword: "",
         });
-        setSubmitted(false);
         setApiErrors({});
         setGeneralError("");
         setAvatarFile(null);
@@ -133,17 +130,24 @@ function SigninModal() {
     };
 
     const showError = (field) =>
-        submitted && Boolean(errors[field]);
+        Boolean(values[field]) && Boolean(errors[field]);
 
     const showSuccess = (field) =>
-        submitted &&
-        Boolean(values[field]) &&
-        !errors[field];
+        Boolean(values[field]) && !errors[field];
+
+    const isFormValid =
+        Boolean(values.username) &&
+        Boolean(values.email) &&
+        Boolean(values.password) &&
+        Boolean(values.confirmPassword) &&
+        !errors.username &&
+        !errors.email &&
+        !errors.password &&
+        !errors.confirmPassword;
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        setSubmitted(true);
         setApiErrors({});
         
         if(Object.values(errors).some(Boolean)) {
@@ -327,10 +331,8 @@ function SigninModal() {
                     )}
                     <button
                         type="submit"
-                        className={`auth-btn text-button ${
-                            submitted ? "auth-btn-submitted" : ""
-                        }`}
-                        disabled={loading}
+                        className="auth-btn text-button"
+                        disabled={loading || !isFormValid}
                     >
                         {loading ? "Signing up..." : "Sign up"}
                     </button>

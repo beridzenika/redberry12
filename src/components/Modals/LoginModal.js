@@ -20,14 +20,12 @@ function LoginModal() {
         email: "",
         password: "",
     });
-    const [submitted, setSubmitted] = useState(false);
 
     const resetForm = () => {
         setValues({
             email: "",
             password: "",
         });
-        setSubmitted(false);
         setApiErrors({});
         setGeneralError("");
     };
@@ -72,18 +70,20 @@ function LoginModal() {
     };
 
     const showError = (field) =>
-    submitted && Boolean(errors[field]);
+        Boolean(values[field]) && Boolean(errors[field]);
 
     const showSuccess = (field) =>
-        submitted &&
-        Boolean(values[field]) &&
-        !errors[field];
+        Boolean(values[field]) && !errors[field];
 
+    const isFormValid =
+        Boolean(values.email) &&
+        Boolean(values.password) &&
+        !errors.email &&
+        !errors.password;
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        setSubmitted(true);
         setApiErrors({});
 
         if(Object.values(errors).some(Boolean)) {
@@ -182,10 +182,8 @@ function LoginModal() {
                     )}
                     <button
                         type="submit"
-                        className={`auth-btn text-button ${
-                            submitted ? "auth-btn-submitted" : ""
-                        }`}
-                        disabled={loading}
+                        className="auth-btn text-button"
+                        disabled={loading || !isFormValid}
                     >
                         {loading ? "Logging in..." : "Log in"}
                     </button>
