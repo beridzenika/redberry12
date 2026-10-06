@@ -145,6 +145,10 @@
 
     padding: 10px 20px;
 }
+.profile-dropdown-link:hover,
+.profile-dropdown-footer:hover {
+    background: var(--color-bg-card);
+}
 
 .profile-dropdown-link {
     color: var(--color-text-primary);
@@ -153,7 +157,8 @@
 
 .profile-dropdown-footer {
     width: 100%;
-
+    margin-top: 4px;
+    
     border: 0;
     background: transparent;
 

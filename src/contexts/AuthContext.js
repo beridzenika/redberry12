@@ -1,4 +1,9 @@
-import { createContext, useState, useCallback, useEffect } from "react";
+import {
+    createContext,
+    useState,
+    useCallback,
+    useEffect,
+} from "react";
 
 export const AuthContext = createContext(null);
 
@@ -8,8 +13,11 @@ export function AuthProvider({ children }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const savedToken = localStorage.getItem("authToken");
-        const savedUser = localStorage.getItem("authUser");
+        const savedToken =
+            localStorage.getItem("authToken");
+
+        const savedUser =
+            localStorage.getItem("authUser");
 
         if (savedToken && savedUser) {
             try {
@@ -28,11 +36,31 @@ export function AuthProvider({ children }) {
         setUser(userData);
         setToken(authToken);
 
-        localStorage.setItem("authToken", authToken);
+        localStorage.setItem(
+            "authToken",
+            authToken
+        );
+
         localStorage.setItem(
             "authUser",
             JSON.stringify(userData)
         );
+    }, []);
+
+    const updateUser = useCallback((userData) => {
+        setUser((currentUser) => {
+            const updatedUser = {
+                ...currentUser,
+                ...userData,
+            };
+
+            localStorage.setItem(
+                "authUser",
+                JSON.stringify(updatedUser)
+            );
+
+            return updatedUser;
+        });
     }, []);
 
     const logout = useCallback(() => {
@@ -43,7 +71,9 @@ export function AuthProvider({ children }) {
         localStorage.removeItem("authUser");
     }, []);
 
-    const isAuthenticated = Boolean(token && user);
+    const isAuthenticated = Boolean(
+        token && user
+    );
 
     return (
         <AuthContext.Provider
@@ -53,6 +83,7 @@ export function AuthProvider({ children }) {
                 isAuthenticated,
                 isLoading,
                 login,
+                updateUser,
                 logout,
             }}
         >

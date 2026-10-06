@@ -16,8 +16,27 @@ export const searchFilms = async (query) => {
     return response.json();
 };
 
-export const loginUser = async (email, password) => {
-    const response = await fetch(`${API_BASE_URL}/login`, {
+const apiRequest = async (endpoint, options = {}) => {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        const error = new Error(
+            data.message || "Something went wrong"
+        );
+
+        error.status = response.status;
+        error.errors = data.errors || {};
+
+        throw error;
+    }
+
+    return data;
+};
+
+export const loginUser = (email, password) =>
+    apiRequest("/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -28,29 +47,13 @@ export const loginUser = async (email, password) => {
         }),
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-        const error = new Error(
-            data.message || "Login failed"
-        );
-        error.status = response.status;
-        error.errors = data.errors || {};
-
-        throw error;
-    }
-    return data;
-};
-
-
-
-export const registerUser = async (
+export const registerUser = ({
     avatar,
     username,
     email,
     password,
     confirmPassword
-) => {
+}) => {
     const formData = new FormData();
 
     if (avatar) {
@@ -62,23 +65,36 @@ export const registerUser = async (
     formData.append("password", password);
     formData.append("password_confirmation", confirmPassword);
 
-    const response = await fetch(`${API_BASE_URL}/register`, {
+    return apiRequest("/register", {
         method: "POST",
         body: formData,
     });
+};
 
-    const data = await response.json();
+export const updateProfile = ({
+    fullName,
+    mobileNumber,
+    dateOfBirth,
+    preferredVenueId,
+    token
+}) => {
+    const formData = new FormData();
 
-    if (!response.ok) {
-        const error = new Error(
-            data.message || "Registration failed"
-        );
+    formData.append("fullName", fullName);
+    formData.append("mobileNumber", mobileNumber);
+    formData.append("dateOfBirth", dateOfBirth);
 
-        error.status = response.status;
-        error.errors = data.errors || {};
+    formData.append(
+        "preferredVenueId",
+        preferredVenueId ?? ""
+    );
 
-        throw error;
-    }
-
-    return data;
+    return apiRequest("/profile", {
+        method: "PUT",
+        headers: {
+            Accept: "*/*",
+            Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+    });
 };

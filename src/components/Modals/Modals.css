@@ -271,3 +271,72 @@
     white-space: nowrap;
     border: 0;
 }
+
+
+/* profile modal */
+
+.auth-modal-profile {
+    width: 880px;
+    box-sizing: border-box;
+
+    padding-left: 51px;
+    padding-right: 51px;
+}
+/* profile icons */
+
+.auth-modal-profile .input-action-icon {
+    position: absolute;
+
+    top: 50%;
+    right: 12px;
+
+    width: 18px;
+    height: 18px;
+
+    transform: translateY(-50%);
+
+    color: var(--color-text-secondary);
+
+    pointer-events: none;
+}
+
+/* date input */
+
+.auth-modal-profile
+.auth-input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.auth-modal-profile
+.auth-input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+
+    position: absolute;
+    right: 0;
+
+    width: 40px;
+    height: 100%;
+
+    cursor: pointer;
+}
+
+/* venue */
+
+.auth-modal-profile .auth-select {
+    appearance: none;
+    -webkit-appearance: none;
+
+    cursor: pointer;
+}
+
+.auth-modal-profile .auth-select::-ms-expand {
+    display: none;
+}
+
+/* profile save button */
+
+.auth-modal-profile .auth-btn {
+    width: auto;
+    align-self: flex-start;
+}

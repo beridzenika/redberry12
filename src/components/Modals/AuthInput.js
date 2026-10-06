@@ -12,9 +12,10 @@ function AuthInput({
     success,
     onChange,
     autoComplete,
-    disabled = {disabled},
+    disabled = false,
 }) {
     const hasError = Boolean(error);
+
     return (
         <div
             className={`auth-input-holder ${
@@ -42,10 +43,13 @@ function AuthInput({
                     autoComplete={autoComplete}
                     aria-invalid={hasError}
                     aria-describedby={
-                        hasError ? `${id}-error` : undefined
+                        hasError
+                            ? `${id}-error`
+                            : undefined
                     }
                     className="auth-input text-label-s"
                     onChange={onChange}
+                    disabled={disabled}
                 />
 
                 {hasError && (

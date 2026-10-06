@@ -1,0 +1,38 @@
+.account-nav-holder {
+    margin: 117px 51px;
+}
+
+.account-header {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.account-nav {
+    display: flex;
+    gap: 32px;
+}
+
+.account-link {
+    padding-bottom: 14px;
+    border-bottom: 2px solid transparent;
+    
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    color: var(--color-text-primary);
+    
+    text-decoration: none;
+    
+    transition:
+        border 150ms ease,
+}
+.link-active, .account-link:hover {
+    border-bottom: 2px solid var(--color-red);
+}
+.ticket-count-num {
+    padding: 2px 6px;
+    background: var(--color-red);
+    border-radius: var(--radius-round);
+}

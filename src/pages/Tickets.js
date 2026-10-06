@@ -1,7 +1,8 @@
+import AccountNav from "../components/AccountNav/AccountNav";
 
 function Tickets() {
     return (
-        <div>Tickets</div>
+        <AccountNav />
     );
 };
 
