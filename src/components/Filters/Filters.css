@@ -1,0 +1,184 @@
+.session-aside {
+    width: 320px;
+    margin: 117px 51px 0 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+}
+
+.session-header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+
+/* filter container */
+
+.filters {
+    padding: 24px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    background: var(--color-bg-card);
+    border-radius: 16px;
+}
+
+.filter-header {
+    display: flex;
+    align-items: center;
+}
+
+.filter-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+/* checkbox */
+
+.filter-checkbox {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    cursor: pointer;
+}
+
+.filter-checkbox input {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+    pointer-events: none;
+}
+
+.filter-checkbox::before {
+    content: "";
+
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+
+    border: 1.5px solid var(--color-text-disabled);
+    border-radius: 5px;
+
+    background: transparent;
+
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.filter-checkbox:has(input:checked)::before {
+    border-color: var(--color-red);
+    background-color: var(--color-red);
+}
+
+.filter-checkbox:has(input:checked)::after {
+    content: "";
+
+    position: absolute;
+    left: 6px;
+    top: 4px;
+
+    width: 5px;
+    height: 9px;
+
+    border-right: 1.5px solid var(--color-bg-card);
+    border-bottom: 1.5px solid var(--color-bg-card);
+
+    border-right-color: var(--color-text-primary);
+    border-bottom-color: var(--color-text-primary);
+
+    transform: rotate(45deg);
+}
+
+.filter-checkbox:has(input:focus-visible)::before {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 2px;
+}
+
+.filter-checkbox-label {
+    min-width: 0;
+}
+
+
+/* date filter */
+
+.filter-section-date {
+    min-width: 0;
+}
+
+.filter-date-list {
+    display: flex;
+    gap: 6px;
+
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    padding-bottom: 2px;
+}
+
+.filter-date-list::-webkit-scrollbar {
+    display: none;
+}
+
+.filter-date {
+    flex: 0 0 37px;
+
+    width: 37px;
+    padding: 10px 6px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: var(--color-bg-raised);
+    color: var(--color-text-primary);
+
+    box-shadow: 0 1px 2px 0 var(--shadow);
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.filter-date:hover {
+    background: var(--color-red);
+}
+
+.filter-date-active {
+    background: var(--color-red);
+    color: var(--color-text-primary);
+}
+/* footer */
+
+.filter-footer {
+    margin-top: 8px;
+
+    text-align: center;
+}

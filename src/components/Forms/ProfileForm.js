@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { useFilterOptions } from "../../hooks/useFilterOptions";
 import { useProfile } from "../../hooks/useProfile";
 import AuthInput from "./AuthInput";
 
@@ -19,7 +20,10 @@ const getInitialValues = (user) => ({
         : "",
 });
 
-function ProfileModal() {
+const sanitizeMobileNumber = (value) =>
+    value.replace(/\s/g, "");
+
+function ProfileForm() {
     const { user } = useAuthContext();
 
     const {
@@ -31,6 +35,12 @@ function ProfileModal() {
         setFieldErrors,
     } = useProfile();
 
+    const {
+        data: filterOptions,
+        loading: filterOptionsLoading,
+        error: filterOptionsError,
+    } = useFilterOptions();
+
     const [values, setValues] = useState(
         () => getInitialValues(user)
     );
@@ -39,31 +49,32 @@ function ProfileModal() {
         () => getInitialValues(user)
     );
 
+    const [touched, setTouched] = useState({});
+
     useEffect(() => {
         const nextValues = getInitialValues(user);
 
         setValues(nextValues);
         setInitialValues(nextValues);
+        setTouched({});
     }, [user]);
 
-    const venues = [
-        {
-            value: "",
-            label: "Select preferred venue",
-        },
-        {
-            value: "1",
-            label: "Venue 1",
-        },
-        {
-            value: "2",
-            label: "Venue 2",
-        },
-        {
-            value: "3",
-            label: "Venue 3",
-        },
-    ];
+    const venues = useMemo(() => {
+        if (!filterOptions?.venues) {
+            return [];
+        }
+
+        return [
+            {
+                value: "",
+                label: "Select preferred venue",
+            },
+            ...filterOptions.venues.map((venue) => ({
+                value: String(venue.id),
+                label: venue.name,
+            })),
+        ];
+    }, [filterOptions]);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -71,6 +82,11 @@ function ProfileModal() {
         setValues((prev) => ({
             ...prev,
             [name]: value,
+        }));
+
+        setTouched((prev) => ({
+            ...prev,
+            [name]: true,
         }));
 
         setFieldErrors((prev) => ({
@@ -119,7 +135,9 @@ function ProfileModal() {
     };
 
     const errors = useMemo(() => {
-        const mobileNumber = values.mobileNumber.trim();
+        const mobileNumber = sanitizeMobileNumber(
+            values.mobileNumber.trim()
+        );
 
         return {
             fullName:
@@ -136,12 +154,12 @@ function ProfileModal() {
                 fieldErrors.mobileNumber ||
                 (!mobileNumber
                     ? "Mobile number is required"
-                    : !mobileNumber.replace(/\s/g, "").startsWith("5")
-                        ? "Georgian mobile numbers must start with 5"
-                        : mobileNumber.replace(/\s/g, "").length !== 9
-                            ? "Mobile number must be exactly 9 digits"
-                            : !/^\d+$/.test(mobileNumber.replace(/\s/g, ""))
-                                ? "Please enter a valid Georgian mobile number (9 digits starting with 5)"
+                    : !/^\d+$/.test(mobileNumber)
+                        ? "Please enter a valid Georgian mobile number"
+                        : !mobileNumber.startsWith("5")
+                            ? "Georgian mobile numbers must start with 5"
+                            : mobileNumber.length !== 9
+                                ? "Mobile number must be exactly 9 digits"
                                 : ""),
 
             dateOfBirth:
@@ -175,14 +193,19 @@ function ProfileModal() {
 
             preferredVenueId:
                 fieldErrors.preferredVenueId || "",
+
+            email:
+                fieldErrors.email || "",
         };
     }, [values, fieldErrors]);
 
     const showError = (field) =>
-        Boolean(values[field]) && Boolean(errors[field]);
+        Boolean(touched[field]) && Boolean(errors[field]);
 
     const showSuccess = (field) =>
-        Boolean(values[field]) && !errors[field];
+        Boolean(touched[field]) &&
+        Boolean(values[field]) &&
+        !errors[field];
 
     const hasChanges = useMemo(
         () =>
@@ -206,8 +229,16 @@ function ProfileModal() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        setTouched({
+            fullName: true,
+            mobileNumber: true,
+            dateOfBirth: true,
+            preferredVenueId: true,
+        });
+
         if (
             loading ||
+            filterOptionsLoading ||
             !hasChanges ||
             !isFormValid
         ) {
@@ -216,12 +247,14 @@ function ProfileModal() {
 
         const result = await update({
             fullName: values.fullName.trim(),
-            mobileNumber: values.mobileNumber.replace(/[^\d\s]/g, ""),
+            mobileNumber: sanitizeMobileNumber(
+                values.mobileNumber
+            ),
             dateOfBirth: values.dateOfBirth,
             preferredVenueId:
                 values.preferredVenueId
-                ? Number(values.preferredVenueId)
-                : null,
+                    ? Number(values.preferredVenueId)
+                    : null,
         });
 
         if (!result.success) {
@@ -239,7 +272,11 @@ function ProfileModal() {
 
         setValues(updatedValues);
         setInitialValues(updatedValues);
+        setTouched({});
     };
+
+    const isLoading =
+        loading || filterOptionsLoading;
 
     return (
         <div className="auth-modal auth-modal-profile">
@@ -248,8 +285,6 @@ function ProfileModal() {
                 noValidate
                 onSubmit={handleSubmit}
             >
-                {/* Full Name */}
-
                 <AuthInput
                     id="profile-full-name"
                     name="fullName"
@@ -264,11 +299,9 @@ function ProfileModal() {
                     }
                     success={showSuccess("fullName")}
                     onChange={handleChange}
-                    disabled={loading}
+                    disabled={isLoading}
                     autoComplete="name"
                 />
-
-                {/* Email */}
 
                 <div className="auth-input-holder">
                     <AuthInput
@@ -288,12 +321,11 @@ function ProfileModal() {
                         disabled
                         autoComplete="email"
                     />
+
                     <p className="text-label-s text-gray">
                         Set at registration and cannot be changed
                     </p>
                 </div>
-
-                {/* Mobile Number */}
 
                 <AuthInput
                     id="profile-mobile-number"
@@ -309,11 +341,9 @@ function ProfileModal() {
                     }
                     success={showSuccess("mobileNumber")}
                     onChange={handleChange}
-                    disabled={loading}
+                    disabled={isLoading}
                     autoComplete="tel"
                 />
-
-                {/* Date of Birth */}
 
                 <div className="auth-input-holder">
                     <label
@@ -349,7 +379,7 @@ function ProfileModal() {
                                     ? "profile-date-of-birth-error"
                                     : undefined
                             }
-                            disabled={loading}
+                            disabled={isLoading}
                         />
 
                         <CalendarIcon
@@ -369,15 +399,11 @@ function ProfileModal() {
                     )}
                 </div>
 
-                {/* Age restriction */}
-
                 {age !== null && age >= 12 && age < 16 && (
                     <p className="text-label-s text-gray">
                         You cannot buy tickets for 16+ or 18+ titles.
                     </p>
                 )}
-
-                {/* Preferred Venue */}
 
                 <div className="auth-input-holder">
                     <label
@@ -401,7 +427,7 @@ function ProfileModal() {
                             value={values.preferredVenueId}
                             onChange={handleChange}
                             className="auth-input text-label-s auth-select"
-                            disabled={loading}
+                            disabled={isLoading}
                             aria-invalid={Boolean(
                                 errors.preferredVenueId
                             )}
@@ -436,9 +462,16 @@ function ProfileModal() {
                             {errors.preferredVenueId}
                         </p>
                     )}
-                </div>
 
-                {/* General API error */}
+                    {filterOptionsError && (
+                        <p
+                            className="text-label-s text-red"
+                            role="alert"
+                        >
+                            Failed to load venues. Please try again.
+                        </p>
+                    )}
+                </div>
 
                 {generalError && (
                     <p
@@ -449,13 +482,11 @@ function ProfileModal() {
                     </p>
                 )}
 
-                {/* Save */}
-
                 <button
                     type="submit"
                     className="auth-btn text-button"
                     disabled={
-                        loading ||
+                        isLoading ||
                         !hasChanges ||
                         !isFormValid
                     }
@@ -469,4 +500,4 @@ function ProfileModal() {
     );
 }
 
-export default ProfileModal;
+export default ProfileForm;

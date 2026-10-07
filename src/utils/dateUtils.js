@@ -24,3 +24,28 @@ export function formatTicketDate(date, time) {
     );
     return `${formattedDate} · ${time}`;
 }
+
+export function getNextDays(count = 7, startDate = new Date()) {
+    return Array.from({ length: count }, (_, index) => {
+        const date = new Date(startDate);
+        date.setDate(date.getDate() + index);
+
+        return {
+            value: formatDateValue(date),
+            weekday: new Intl.DateTimeFormat("en-US", {
+                weekday: "short",
+            }).format(date),
+            day: new Intl.DateTimeFormat("en-US", {
+                day: "numeric",
+            }).format(date),
+        };
+    });
+}
+
+function formatDateValue(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}

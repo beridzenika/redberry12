@@ -1,11 +1,11 @@
 import AccountNav from "../components/AccountNav/AccountNav";
-import ProfileModal from "../components/Modals/ProfileModal";
+import ProfileForm from "../components/Forms/ProfileForm";
 
 function Profile() {
     return (
         <main>
             <AccountNav />
-            <ProfileModal/>
+            <ProfileForm/>
         </main>
     );
 };

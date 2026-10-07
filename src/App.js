@@ -6,8 +6,8 @@ import Sessions from "./pages/Sessions";
 import Profile from "./pages/Profile";
 import MyTickets from "./pages/MyTickets";
 
-import LoginModal from "./components/Modals/LoginModal";
-import SigninModal from "./components/Modals/SigninModal";
+import LoginModal from "./components/Forms/LoginModal";
+import SigninModal from "./components/Forms/SigninModal";
 
 import RequireAuth from "./components/RequireAuth/RequireAuth";
 
