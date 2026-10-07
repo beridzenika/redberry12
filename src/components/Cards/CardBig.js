@@ -1,5 +1,3 @@
-import { useCallback } from "react";
-
 import { useMovies } from "../../hooks/useMovies";
 
 import "./Card.css";

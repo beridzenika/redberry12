@@ -4,10 +4,12 @@ import Footer from "./components/Footer/Footer";
 import Home from "./pages/Home";
 import Sessions from "./pages/Sessions";
 import Profile from "./pages/Profile";
-import Tickets from "./pages/Tickets";
+import MyTickets from "./pages/MyTickets";
 
 import LoginModal from "./components/Modals/LoginModal";
 import SigninModal from "./components/Modals/SigninModal";
+
+import RequireAuth from "./components/RequireAuth/RequireAuth";
 
 import "./styles/variables.css";
 import "./styles/global.css";
@@ -22,8 +24,22 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/sessions" element={<Sessions />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/tickets" element={<Tickets />} />
+                <Route 
+                    path="/profile" 
+                    element={
+                        <RequireAuth>
+                            <Profile />
+                        </RequireAuth>
+                    } 
+                />
+                <Route 
+                    path="/tickets" 
+                    element={
+                        <RequireAuth>
+                            <MyTickets />
+                        </RequireAuth>
+                    } 
+                />
             </Routes>
 
             <Footer />

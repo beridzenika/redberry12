@@ -16,6 +16,8 @@ export const searchFilms = async (query) => {
     return response.json();
 };
 
+// authentication
+
 const apiRequest = async (endpoint, options = {}) => {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
 
@@ -71,6 +73,8 @@ export const registerUser = ({
     });
 };
 
+// authorised
+
 export const updateProfile = ({
     fullName,
     mobileNumber,
@@ -96,5 +100,15 @@ export const updateProfile = ({
             Authorization: `Bearer ${token}`,
         },
         body: formData,
+    });
+};
+
+export const fetchAuthenticatedData = (url, token) => {
+    return apiRequest(`/${url}`, {
+        method: "GET",
+        headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+        },
     });
 };

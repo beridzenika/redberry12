@@ -12,3 +12,15 @@ export function formatPremiereDate(date) {
         year: "numeric",
     });
 }
+
+export function formatTicketDate(date, time) {
+    const formattedDate = new Date(`${date}T${time}`).toLocaleDateString(
+        "en-US",
+        {
+            weekday: "short",
+            day: "2-digit",
+            month: "short",
+        }
+    );
+    return `${formattedDate} · ${time}`;
+}
