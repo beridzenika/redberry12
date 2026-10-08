@@ -43,7 +43,7 @@ function ProfileTab({ user, isOpen }) {
 
             <OpenIcon
                 className={`profile-open-icon ${
-                    isOpen ? "profile-open-icon-rotated" : ""
+                    isOpen ? "open-icon-rotated" : ""
                 }`}
                 aria-hidden="true"
             />

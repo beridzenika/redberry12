@@ -14,7 +14,7 @@ function CardMedium() {
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <div className="card-row card-mid-row">
+        <div className="card-row card-mid-row horizontal-scroll">
             {cards.map((card) => (
                 <article className="card-medium card" key={card.id}>
                     <div

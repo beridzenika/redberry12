@@ -117,3 +117,38 @@ export const fetchAuthenticatedData = (url, token) => {
         },
     });
 };
+
+
+// filters
+export const fetchSessions = async ({
+    filters,
+    sort,
+    page,
+}) => {
+    const params = new URLSearchParams();
+
+    if (filters.dates?.length > 0) {
+        params.set("date", filters.dates[0]);
+    }
+
+    filters.venues?.forEach((venue) => {
+        params.append("venues[]", venue);
+    });
+
+    filters.formats?.forEach((format) => {
+        params.append("formats[]", format);
+    });
+
+    filters.languages?.forEach((language) => {
+        params.append("languages[]", language);
+    });
+
+    filters.timeBands?.forEach((timeBand) => {
+        params.append("timeBands[]", timeBand);
+    });
+
+    params.set("sort", sort);
+    params.set("page", page);
+
+    return fetchData(`sessions?${params.toString()}`);
+};

@@ -1,26 +1,16 @@
-/* Card Row
--------------------------------------------------- */
+/* Fade */
 
-.card-row {
+.card-holder {
     position: relative;
-
-    display: flex;
-    gap: 17px;
-
-    overflow: hidden;
 }
 
-/* Fade
--------------------------------------------------- */
-
-.card-row::after {
+.card-holder::after {
     position: absolute;
     inset: 0 0 0 auto;
 
     width: 120px;
 
     pointer-events: none;
-
     content: "";
 
     background: linear-gradient(
@@ -30,8 +20,14 @@
     );
 }
 
-/* Card
--------------------------------------------------- */
+/* Card Row */
+
+.card-row {
+    display: flex;
+    gap: 17px;
+}
+
+/* Card */
 
 .card {
     padding: 14px;
@@ -43,18 +39,9 @@
     box-shadow: 0 1px 4px var(--shadow);
 }
 
-/* Card Row Layout
--------------------------------------------------- */
+/* Card Row Layout */
 
-.card-big-row {
-    /*
-     * The row determines how many cards are visible.
-     * No fixed card count is necessary.
-     */
-}
-
-/* Big Card
--------------------------------------------------- */
+/* Big Card */
 
 .card-big {
     flex: 0 0 260px;
@@ -72,8 +59,7 @@
     width: 447px;
 }
 
-/* Medium Card
--------------------------------------------------- */
+/* Medium Card */
 .card-medium {
     flex: 0 0 470px;
     height: 160px;
@@ -82,8 +68,7 @@
 }
 
 
-/* Poster
--------------------------------------------------- */
+/* Poster */
 
 .card-poster {
     width: 100%;
@@ -114,8 +99,7 @@
     height: 224px;
 }
 
-/* Text Content
--------------------------------------------------- */
+/* Text Content */
 
 .text-content {
     display: flex;
@@ -127,15 +111,13 @@
     padding-top: 10px;
 }
 
-/* Text
--------------------------------------------------- */
+/* Text  */
 
 .badge-red {
     align-self: flex-start;
 }
 
-/* Description
--------------------------------------------------- */
+/* Description */
 
 .description {
     display: -webkit-box;
@@ -157,8 +139,7 @@
     opacity: 0;
 }
 
-/* Footer
--------------------------------------------------- */
+/* Footer */
 
 .card-footer {
     display: flex;

@@ -9,7 +9,7 @@ function CardBig() {
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <div className="card-row card-big-row">
+        <div className="card-row card-big-row horizontal-scroll">
             {cards.map((card) => (
                 <article className="card-big card" key={card.id}>
                     <div

@@ -1,0 +1,75 @@
+/* Sort layout */
+.session-sort-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.session-sort {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.session-sort-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--color-text-primary);
+    
+    cursor: pointer;
+}
+
+/* Dropdown icon */
+.sort-open-icon {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+}
+
+.open-icon-rotated {
+    transform: rotate(180deg);
+}
+
+/* Dropdown options */
+.session-sort-options {
+    position: absolute;
+
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 10;
+    min-width: 180px;
+    padding: 6px;
+
+    background: var(--color-bg-page);
+    border: 1px solid var(--color-bg-card);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Dropdown option */
+.session-sort-option {
+    width: 100%;
+    padding: 8px 10px;
+
+    border: none;
+    border-radius: 6px;
+
+    background: transparent;
+    color: var(--color-text-primary);
+
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+    color: var(--color-text-secondary);
+}
+
+/* Dropdown option hover/active */
+.session-sort-option:hover, .session-sort-option-active {
+    color: var(--color-text-primary);
+}

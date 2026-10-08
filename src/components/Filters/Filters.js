@@ -1,9 +1,38 @@
 import "./Filters.css";
+import { useState } from "react";
 import { getNextDays } from "../../utils/dateUtils";
 
 const DATE_COUNT = 7;
 
-const Filters = ({ options, filters, onChange }) => {
+function Filters ({ 
+    options, 
+    filters, 
+    onChange, 
+    loading, 
+    error 
+}) {
+    const [selectedDate, setSelectedDate] = useState(
+        filters?.dates?.[0] || null
+    );
+
+    if (loading) {
+        return (
+            <aside className="session-aside">
+                Loading filters...
+            </aside>
+        );
+    }
+
+    if (error) {
+        return (
+            <aside className="session-aside">
+                Failed to load filters: 
+                <span className="text-label-s text-red">
+                    {error}
+                </span>
+            </aside>
+        );
+    }
     if (!options) {
         return null;
     }
@@ -87,8 +116,24 @@ const Filters = ({ options, filters, onChange }) => {
         onChange(type, newValues);
     };
 
+    const handleClearFilters = () => {
+        setSelectedDate(null);
+
+        onChange("dates", []);
+        onChange("venues", []);
+        onChange("formats", []);
+        onChange("languages", []);
+        onChange("timeBands", []);
+    };
+
     const handleDateChange = (date) => {
-        onChange("dates", [date]);
+        if (selectedDate === date) {
+            setSelectedDate(null);
+            onChange("dates", []);
+        } else {
+            setSelectedDate(date);
+            onChange("dates", [date]);
+        }
     };
 
     return (
@@ -134,10 +179,10 @@ const Filters = ({ options, filters, onChange }) => {
                         DATE
                     </div>
 
-                    <div className="filter-date-list">
+                    <div className="filter-date-list horizontal-scroll">
                         {dates.map((date) => {
                             const isSelected =
-                                filters.dates.includes(date.value);
+                                selectedDate === date.value;
 
                             return (
                                 <button
@@ -176,17 +221,29 @@ const Filters = ({ options, filters, onChange }) => {
                             getValue={group.getValue}
                             getLabel={group.getLabel}
                             onChange={(value) =>
-                                handleCheckboxChange(group.key, value)
+                                handleCheckboxChange(
+                                    group.key,
+                                    value
+                                )
                             }
                         />
 
-                        {index < filterGroups.slice(1).length - 1 && (
+                        {index <
+                            filterGroups.slice(1).length - 1 && (
                             <hr className="page-line" />
                         )}
                     </div>
                 ))}
 
                 <div className="filter-footer">
+                    <button
+                        type="button"
+                        className="text-label-s btn-border clear-filter-btn"
+                        onClick={handleClearFilters}
+                        disabled={activeFilterCount === 0}
+                    >
+                        Clear filters
+                    </button>
                     <span className="text-body-s text-gray">
                         {activeFilterCount}{" "}
                         {activeFilterCount === 1

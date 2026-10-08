@@ -172,6 +172,9 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 .badge-s {
+    padding: 5px 10px;
+}
+.badge-s {
     padding: 4px 8px;
 }
 
@@ -194,4 +197,22 @@ h1, h2, h3, h4, h5, h6, p {
 
 .success-icon {
     color: var(--color-green);
+}
+
+/* scroll utility */
+.horizontal-scroll {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.horizontal-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* open icon */
+.open-icon-rotated {
+    transform: rotate(180deg);
 }

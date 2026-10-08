@@ -1,10 +1,10 @@
 .session-aside {
-    width: 320px;
-    margin: 117px 51px 0 0;
-
     display: flex;
     flex-direction: column;
     gap: 36px;
+    position: sticky;
+    top: -70px;
+    align-self: flex-start;
 }
 
 .session-header {
@@ -128,17 +128,7 @@
     display: flex;
     gap: 6px;
 
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-
     padding-bottom: 2px;
-}
-
-.filter-date-list::-webkit-scrollbar {
-    display: none;
 }
 
 .filter-date {
@@ -178,7 +168,20 @@
 /* footer */
 
 .filter-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
     margin-top: 8px;
 
     text-align: center;
+}
+
+.clear-filter-btn {
+    text-align: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 9px 12px !important;
 }

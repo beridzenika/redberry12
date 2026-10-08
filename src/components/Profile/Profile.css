@@ -102,10 +102,6 @@
     z-index: 100;
 }
 
-.profile-open-icon-rotated {
-    transform: rotate(180deg);
-}
-
 /* dropdown content */
 .profile-dropdown .profile-user {
     margin: 10px 20px 0;

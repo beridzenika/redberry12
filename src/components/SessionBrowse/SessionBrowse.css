@@ -1,0 +1,116 @@
+/* main page layout */
+.session {
+    display: flex;
+    align-items: flex-start;
+    gap: 51px;
+    margin: 117px 51px;
+}
+
+.session-content {
+    width: 1255px;
+    margin-top: 83px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* session */
+.session-browse {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.session-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* movie */
+.session-movie {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.session-movie-poster {
+    width: 56px;
+    height: 80px;
+
+    flex: 0 0 56px;
+
+    border-radius: 8px;
+
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+/* movie text content */
+.session-movie-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.session-movie-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* show times */
+.session-showtimes {
+    display: flex;
+    gap: 12px;
+}
+
+.session-showtime {
+    width: 252px;
+    flex: 0 0 252px;
+    padding: 15px;
+
+    display: grid;
+    grid-template-rows: auto auto auto;
+    gap: 10px;
+
+    border-radius: 16px;
+
+    background: var(--color-bg-card);
+}
+
+.session-showtime-sold {
+    opacity: 0.4;
+}
+
+/* showtime content */
+.showtime-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.ticket-left {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    color: var(--color-green);
+}
+.session-showtime-sold .ticket-left {
+    color: var(--color-text-secondary);
+}
+
+.ticket-left svg {
+    width: 12px;
+    height: 12px;
+
+    flex: 0 0 12px;
+}
+
+.ticket-left-low {
+    color: var(--color-red);
+}
