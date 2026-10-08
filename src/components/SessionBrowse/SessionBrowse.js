@@ -23,7 +23,7 @@ function SessionBrowse({ data, loading, error }) {
 
     return (
         <div className="session-browse">
-            {movies.map((group) => (
+            {movies.map((group, index) => (
                 <>
                 <section
                         className="session-section"
@@ -127,7 +127,7 @@ function SessionBrowse({ data, loading, error }) {
                         </div>
                     </section>
 
-                    <hr className="page-line" />
+                    {index < movies.length - 1 && <hr className="page-line" />}
                 </>
             ))}
         </div>
