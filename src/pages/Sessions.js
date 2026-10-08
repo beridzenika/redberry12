@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import Filters from "../components/Filters/Filters";
 import SessionSort from "../components/Sort/SessionSort";
@@ -9,23 +10,50 @@ import { useFilterOptions } from "../hooks/useFilterOptions";
 import { useFetch } from "../hooks/useFetch";
 import { fetchSessions } from "../services/api";
 
+const DEFAULT_SORT = "price_asc";
+
+const parseArrayParam = (searchParams, key) => {
+    const value = searchParams.get(key);
+
+    if (!value) {
+        return [];
+    }
+
+    return value.split(",").filter(Boolean);
+};
+
 function Sessions() {
+    const [searchParams, setSearchParams] = useSearchParams();
+
     const {
         data: filterOptions,
         loading: filtersLoading,
         error: filtersError,
     } = useFilterOptions();
 
-    const [filters, setFilters] = useState({
-        dates: [],
-        venues: [],
-        formats: [],
-        languages: [],
-        timeBands: [],
-    });
+    const filters = useMemo(
+        () => ({
+            dates: searchParams.get("date")
+                ? [searchParams.get("date")]
+                : [],
 
-    const [sort, setSort] = useState("price_asc");
-    const [page, setPage] = useState(1);
+            venues: parseArrayParam(searchParams, "venue"),
+
+            formats: parseArrayParam(searchParams, "format"),
+
+            languages: parseArrayParam(searchParams, "language"),
+
+            timeBands: parseArrayParam(searchParams, "timeBand"),
+        }),
+        [searchParams]
+    );
+
+    const sort = searchParams.get("sort") || DEFAULT_SORT;
+
+    const page = Math.max(
+        1,
+        Number(searchParams.get("page")) || 1
+    );
 
     const getSessions = useCallback(() => {
         return fetchSessions({
@@ -42,21 +70,57 @@ function Sessions() {
     } = useFetch(getSessions, [filters, sort, page]);
 
     const handleFilterChange = (type, values) => {
-        setFilters((current) => ({
-            ...current,
-            [type]: values,
-        }));
+        setSearchParams((current) => {
+            const next = new URLSearchParams(current);
 
-        setPage(1);
+            const paramMap = {
+                dates: "date",
+                venues: "venue",
+                formats: "format",
+                languages: "language",
+                timeBands: "timeBand",
+            };
+
+            const param = paramMap[type];
+
+            next.delete(param);
+
+            if (type === "dates") {
+                if (values.length > 0) {
+                    next.set("date", values[0]);
+                }
+            } else if (values.length > 0) {
+                next.set(param, values.join(","));
+            }
+
+            // Every filter change resets pagination
+            next.set("page", "1");
+
+            return next;
+        });
     };
 
     const handleSortChange = (value) => {
-        setSort(value);
-        setPage(1);
+        setSearchParams((current) => {
+            const next = new URLSearchParams(current);
+
+            next.set("sort", value);
+
+            // Sorting resets pagination
+            next.set("page", "1");
+
+            return next;
+        });
     };
 
     const handlePageChange = (newPage) => {
-        setPage(newPage);
+        setSearchParams((current) => {
+            const next = new URLSearchParams(current);
+
+            next.set("page", String(newPage));
+
+            return next;
+        });
     };
 
     return (

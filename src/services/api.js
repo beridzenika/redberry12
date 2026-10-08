@@ -131,24 +131,24 @@ export const fetchSessions = async ({
         params.set("date", filters.dates[0]);
     }
 
-    filters.venues?.forEach((venue) => {
-        params.append("venues[]", venue);
-    });
+    if (filters.venues?.length > 0) {
+        params.set("venue", filters.venues.join(","));
+    }
 
-    filters.formats?.forEach((format) => {
-        params.append("formats[]", format);
-    });
+    if (filters.formats?.length > 0) {
+        params.set("format", filters.formats.join(","));
+    }
 
-    filters.languages?.forEach((language) => {
-        params.append("languages[]", language);
-    });
+    if (filters.languages?.length > 0) {
+        params.set("language", filters.languages.join(","));
+    }
 
-    filters.timeBands?.forEach((timeBand) => {
-        params.append("timeBands[]", timeBand);
-    });
+    if (filters.timeBands?.length > 0) {
+        params.set("timeBand", filters.timeBands.join(","));
+    }
 
     params.set("sort", sort);
-    params.set("page", page);
+    params.set("page", String(page));
 
     return fetchData(`sessions?${params.toString()}`);
 };
