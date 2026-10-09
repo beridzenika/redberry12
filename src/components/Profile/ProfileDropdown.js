@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import ProfileTab from "./ProfileTab";
 import { useDismiss } from "../../hooks/useDismiss";
+import { useLogout } from "../../hooks/useLogout";
 
 import { ReactComponent as CheckIcon } from "../../assets/icons/Check.svg";
 import { ReactComponent as ProfileIcon } from "../../assets/icons/Profile.svg";
@@ -15,7 +16,21 @@ function ProfileDropdown({ user }) {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
 
-    const displayName = user?.username || user?.fullName || "User";
+    const { handleLogout, loading, error,} = useLogout();
+
+    const fullName = user?.fullName?.trim();
+    const username = user?.username?.trim();
+
+    const displayName = fullName
+        ? fullName.split(/\s+/)[0]
+        : username || "User";
+
+    const avatarInitials = fullName
+        ? fullName
+            .split(/\s+/)
+            .map((name) => name.charAt(0).toUpperCase())
+            .join("")
+        : (username?.charAt(0).toUpperCase() || "U");
 
     const avatarUrl =
         user?.avatar && user.avatar !== "string"
@@ -69,9 +84,7 @@ function ProfileDropdown({ user }) {
                             >
                                 {!avatarUrl && (
                                     <span className="text-label-s">
-                                        {displayName
-                                            .charAt(0)
-                                            .toUpperCase()}
+                                        {avatarInitials}
                                     </span>
                                 )}
                             </div>
@@ -158,18 +171,22 @@ function ProfileDropdown({ user }) {
                     <button
                         type="button"
                         className="profile-dropdown-footer"
-                        // onClick={() => {
-                        //     // logout 
-                        // }}
+                        onClick={handleLogout}
+                        disabled={loading}
                     >
                         <LogOutIcon
                             className="error-icon"
                             aria-hidden="true"
                         />
                         <span className="text-label-m text-red">
-                            Log out
+                            {loading ? "Logging out..." : "Log out"}
                         </span>
                     </button>
+                    {error && (
+                        <p role="alert">
+                            {error}
+                        </p>
+                    )}
                 </div>
             )}
         </div>

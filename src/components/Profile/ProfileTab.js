@@ -2,7 +2,20 @@ import { ReactComponent as OpenIcon } from "../../assets/icons/Open.svg";
 import "./Profile.css";
 
 function ProfileTab({ user, isOpen }) {
-    const displayName = user?.username || user?.fullName || "User";
+    const fullName = user?.fullName?.trim();
+    const username = user?.username?.trim();
+
+    const displayName = fullName
+        ? fullName.split(/\s+/)[0]
+        : username || "User";
+
+    const avatarInitials = fullName
+        ? fullName
+            .split(/\s+/)
+            .map((name) => name.charAt(0).toUpperCase())
+            .join("")
+        : (username?.charAt(0).toUpperCase() || "U");
+
     const avatarUrl =
         user?.avatar && user.avatar !== "string"
             ? user.avatar
@@ -22,7 +35,7 @@ function ProfileTab({ user, isOpen }) {
                     >
                         {!avatarUrl && (
                             <span className="text-label-s">
-                                {displayName.charAt(0).toUpperCase()}
+                                {avatarInitials}
                             </span>
                         )}
                     </div>

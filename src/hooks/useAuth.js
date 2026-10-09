@@ -44,20 +44,20 @@ export const useAuth = () => {
     };
 
     const register = async (
-        avatar, 
-        username, 
-        email, 
-        password, 
+        avatar,
+        username,
+        email,
+        password,
         confirmPassword,
     ) => {
-        return handleAuth(() => 
-            registerUser(
-                avatar, 
-                username, 
-                email, 
-                password, 
-                confirmPassword
-            )
+        return handleAuth(() =>
+            registerUser({
+                avatar,
+                username,
+                email,
+                password,
+                confirmPassword,
+            })
         );
     };
 

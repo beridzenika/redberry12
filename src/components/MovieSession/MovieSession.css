@@ -29,6 +29,12 @@
     gap: 7px;
     align-items: center;
     justify-content: center;
+
+    transition: flex-basis 300ms linear, width 300ms linear;
+}
+.screening-date:hover, .screening-date-active {
+    background: var(--color-red);
+    width: 100px;
 }
 
 /* session vanues */
@@ -172,4 +178,14 @@
 /* sold out */
 .screening-ticket--sold-out {
     opacity: 0.6;
+}
+
+/* age restriction */
+.movie-session-disabled {
+    pointer-events: none;
+}
+
+.movie-session-restriction {
+    color: var(--color-red);
+    padding: 16px 0;
 }

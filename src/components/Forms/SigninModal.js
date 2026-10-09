@@ -16,6 +16,7 @@ function SigninModal() {
         = useAuth();
 
     const [apiErrors, setApiErrors] = useState({});
+    const [avatarError, setAvatarError] = useState("");
 
     const [values, setValues] = useState({
         username: "",
@@ -68,6 +69,7 @@ function SigninModal() {
 
     const handleAvatarChange = (event) => {
         const file = event.target.files?.[0];
+
         if (!file) return;
 
         const allowedTypes = [
@@ -75,12 +77,16 @@ function SigninModal() {
             "image/png",
             "image/webp",
         ];
+
         if (!allowedTypes.includes(file.type)) {
             event.target.value = "";
+            setAvatarError("Please upload a JPG, PNG, or WEBP image.");
             return;
         }
 
+        setAvatarError("");
         setAvatarFile(file);
+
         const previewUrl = URL.createObjectURL(file);
 
         setAvatarPreview((previousUrl) => {
@@ -89,7 +95,7 @@ function SigninModal() {
             }
             return previewUrl;
         });
-    };
+};
 
     useEffect(() => {
         return () => {
@@ -252,6 +258,11 @@ function SigninModal() {
                             onChange={handleAvatarChange}
                         />
                     </div>
+                    {avatarError && (
+                        <p className="text-label-s text-red" role="alert">
+                            {avatarError}
+                        </p>
+                    )}
                     <AuthInput
                         id="signup-username"
                         name="username"

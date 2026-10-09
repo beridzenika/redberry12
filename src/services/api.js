@@ -59,11 +59,12 @@ export const registerUser = ({
     username,
     email,
     password,
-    confirmPassword
+    confirmPassword,
 }) => {
     const formData = new FormData();
 
-    if (avatar) {
+    // Avatar is optional. Only append it when a file exists.
+    if (avatar instanceof File) {
         formData.append("avatar", avatar);
     }
 
@@ -75,6 +76,17 @@ export const registerUser = ({
     return apiRequest("/register", {
         method: "POST",
         body: formData,
+    });
+};
+
+// log out
+export const logOutUser = (token) => {
+    return apiRequest(`/logout`, {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+        },
     });
 };
 

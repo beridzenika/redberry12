@@ -81,7 +81,7 @@ function SessionTicket({ session }) {
     );
 }
 
-function MovieSession({ movieId }) {
+function MovieSession({ movieId, isAgeRestricted, minAge }) {
     const [date, setDate] = useState(getToday);
 
     const getSessions = useCallback(() => {
@@ -109,6 +109,17 @@ function MovieSession({ movieId }) {
             })),
         [venueSessions]
     );
+
+    if (isAgeRestricted) {
+        return (
+            <section className="movie-session movie-session-disabled">
+                <p className="movie-session-restriction">
+                    This film is rated {minAge}+. You cannot buy tickets
+                    for it with this account.
+                </p>
+            </section>
+        );
+    }
 
     return (
         <section
