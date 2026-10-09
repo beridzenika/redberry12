@@ -58,7 +58,7 @@ function ProfileDropdown({ user }) {
                     <div className="profile-user">
                         <div className="profile-avatar-wrapper">
                             <div
-                                className="profile-avatar"
+                                className="profile-avatar bg-img"
                                 style={
                                     avatarUrl
                                         ? {

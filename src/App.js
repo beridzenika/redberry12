@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Sessions from "./pages/Sessions";
 import Profile from "./pages/Profile";
 import MyTickets from "./pages/MyTickets";
+import MoviePage from "./pages/MoviePage";
 
 import LoginModal from "./components/Forms/LoginModal";
 import SigninModal from "./components/Forms/SigninModal";
@@ -24,6 +25,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/sessions" element={<Sessions />} />
+                <Route path="/movie/:id" element={<MoviePage />} />
                 <Route 
                     path="/profile" 
                     element={

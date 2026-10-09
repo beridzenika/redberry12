@@ -22,7 +22,7 @@ function TicketCard({ ticket }) {
     return (
         <article className="ticket-card">
             <div
-                className="ticket-poster card-poster"
+                className="ticket-poster card-poster bg-img"
                 style={{
                     backgroundImage: `url(${movie.posterUrl})`,
                 }}

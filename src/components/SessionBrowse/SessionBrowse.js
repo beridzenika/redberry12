@@ -31,7 +31,7 @@ function SessionBrowse({ data, loading, error }) {
                     >
                         <div className="session-movie">
                             <div
-                                className="session-movie-poster"
+                                className="session-movie-poster bg-img"
                                 style={{
                                     backgroundImage: `url(${group.movie.posterUrl})`,
                                 }}

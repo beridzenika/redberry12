@@ -11,14 +11,14 @@ function CardMedium() {
     const { movies: cards, loading, error } = useMovies("coming-soon");
 
     if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error}</p>;
+    if (error) return <p className="text-body-s text-red">Error: {error}</p>;
 
     return (
         <div className="card-row card-mid-row horizontal-scroll">
             {cards.map((card) => (
                 <article className="card-medium card" key={card.id}>
                     <div
-                        className="card-poster medium-poster"
+                        className="card-poster medium-poster bg-img"
                         style={{
                             backgroundImage: `url(${card.posterUrl})`,
                         }}

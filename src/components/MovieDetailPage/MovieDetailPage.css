@@ -1,0 +1,85 @@
+/* movie display background*/
+.movie-container {
+    width: 100%;
+    height: 567px;
+
+    position: relative;
+}
+
+.movie-container-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(7, 12, 28, 0.2);
+    backdrop-filter: blur(10px);
+    z-index: 1;
+}
+
+/* display */
+.movie-display {
+    position: absolute;
+    z-index: 100;
+    margin: 152px 0 0 60px;
+
+    display: flex;
+    gap: 34px;
+    align-items: end;
+}
+
+.movie-poster {
+    box-shadow: 0px 4px 64px 0px var(--shadow);
+    border-radius: 14px;
+
+    width: 289px;
+    height: 374px;
+}
+
+/* display content  */
+
+.movie-display-content {
+    width: 580px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 9px 0;
+}
+
+/* page detail layout */
+.movie-detail-layout {
+    margin-top: 34px;
+    padding: 0 51px;
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+/* details */
+
+.movie-details {
+    padding: 0 26px;
+    width: 441px;
+    box-sizing: border-box;
+    border-radius: 20px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
+.detail-section {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+/* age rating */
+.rating-note {
+    background-color: var(--color-tint-warning);
+    color: var(--color-orange);
+
+    padding: 9px 13px;
+    border-radius: 12px;
+}
+.rating-note-content {
+    display: flex;
+    gap: 7px;
+}

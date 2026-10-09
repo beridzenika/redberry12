@@ -31,10 +31,6 @@
 
     background-color: var(--color-bg-card);
 
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-
     color: var(--color-text-primary);
 
     overflow: hidden;

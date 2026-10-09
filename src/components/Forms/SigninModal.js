@@ -210,7 +210,7 @@ function SigninModal() {
                             className="avatar-upload-control"
                         >
                             <div
-                                className={`avatar-preview ${
+                                className={`avatar-preview bg-img ${
                                     avatarPreview
                                         ? "has-image"
                                         : ""

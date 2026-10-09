@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 import { formatPremiereDate } from "../../utils/dateUtils";
 
 import { ReactComponent as TimerIcon } from "../../assets/icons/Timer.svg";
@@ -7,18 +9,16 @@ function HeroSlide({ movie, className }) {
     
     return (
         <div className={`hero-slide ${className}`}>
-            {/* Background */}
             <div
-                className="hero-background"
+                className="hero-background bg-img"
                 style={{
                     backgroundImage: `url(${movie.backdropUrl})`,
                 }}
                 aria-hidden="true"
             />
 
-                        <div className="hero-overlay" aria-hidden="true" />
+            <div className="hero-overlay" aria-hidden="true" />
 
-            {/* Content */}
             <div className="hero-content">
                 <span className="badge-red text-label-s hero-premiere">
                     {movie.isComingSoon
@@ -55,20 +55,20 @@ function HeroSlide({ movie, className }) {
                 </p>
 
                 <div className="button-holder">
-                    <button
-                        className="btn-red text-button"
-                        type="button"
+                    <Link
+                        className="btn-red text-button hero-button"
+                        to={`/movie/${movie.slug}`}
                     >
                         <TicketIcon aria-hidden="true" />
                         Buy tickets
-                    </button>
+                    </Link>
 
-                    <button
-                        className="btn-gray text-button"
-                        type="button"
+                    <Link
+                        className="btn-gray text-button hero-button"
+                        to="/sessions"
                     >
                         All sessions
-                    </button>
+                    </Link>
                 </div>
             </div>
         </div>

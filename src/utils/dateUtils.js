@@ -1,4 +1,5 @@
 export function formatReleaseDate(date) {
+    // OCTOBER 9
     return new Date(date).toLocaleDateString("en-US", {
         day: "numeric",
         month: "long",
@@ -6,6 +7,7 @@ export function formatReleaseDate(date) {
 }
 
 export function formatPremiereDate(date) {
+    // Oct 9, 2026
     return new Date(date).toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
@@ -13,7 +15,17 @@ export function formatPremiereDate(date) {
     });
 }
 
+export function formatFullDate (date) { 
+    // 4 Octomber 2026
+    return new Date(date).toLocaleDateString("en-GB", { 
+        day: "numeric", 
+        month: "long", 
+        year: "numeric", 
+    }); 
+}
+
 export function formatTicketDate(date, time) {
+    // Fri, 09 Oct · 19:30
     const formattedDate = new Date(`${date}T${time}`).toLocaleDateString(
         "en-US",
         {
@@ -30,6 +42,7 @@ export function getNextDays(count = 7, startDate = new Date()) {
         const date = new Date(startDate);
         date.setDate(date.getDate() + index);
 
+        // value: 2026-10-09 weekday: Fri day: 9
         return {
             value: formatDateValue(date),
             weekday: new Intl.DateTimeFormat("en-US", {
@@ -49,3 +62,13 @@ function formatDateValue(date) {
 
     return `${year}-${month}-${day}`;
 }
+
+export const getToday = () => {
+    const today = new Date();
+
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+};

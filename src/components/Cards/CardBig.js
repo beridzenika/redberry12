@@ -6,14 +6,14 @@ function CardBig() {
     const { movies: cards, loading, error } = useMovies("now-playing");
 
     if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error}</p>;
+    if (error) return <p className="text-body-s text-red">Error: {error}</p>;
 
     return (
         <div className="card-row card-big-row horizontal-scroll">
             {cards.map((card) => (
                 <article className="card-big card" key={card.id}>
                     <div
-                        className="card-poster big-poster"
+                        className="card-poster big-poster bg-img"
                         style={{
                             backgroundImage: `url(${card.posterUrl})`,
                         }}

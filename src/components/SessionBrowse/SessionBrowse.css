@@ -42,10 +42,6 @@
     flex: 0 0 56px;
 
     border-radius: 8px;
-
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
 }
 
 /* movie text content */
@@ -95,7 +91,7 @@
 
 .ticket-left {
     display: flex;
-    align-items: center;
+    align-items: top;
     gap: 4px;
 
     color: var(--color-green);

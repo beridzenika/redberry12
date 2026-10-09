@@ -171,7 +171,7 @@ h1, h2, h3, h4, h5, h6, p {
     color: var(--color-text-primary);
 }
 
-.badge-s {
+.badge-m {
     padding: 5px 10px;
 }
 .badge-s {
@@ -215,4 +215,12 @@ h1, h2, h3, h4, h5, h6, p {
 /* open icon */
 .open-icon-rotated {
     transform: rotate(180deg);
+}
+
+
+/* background image */
+.bg-img {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
