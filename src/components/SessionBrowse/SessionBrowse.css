@@ -73,7 +73,9 @@
     gap: 10px;
 
     border-radius: 16px;
+    border: none;
 
+    color: var(--color-text-primary);
     background: var(--color-bg-card);
 }
 

@@ -93,7 +93,6 @@ function Sessions() {
                 next.set(param, values.join(","));
             }
 
-            // Every filter change resets pagination
             next.set("page", "1");
 
             return next;
@@ -106,7 +105,6 @@ function Sessions() {
 
             next.set("sort", value);
 
-            // Sorting resets pagination
             next.set("page", "1");
 
             return next;

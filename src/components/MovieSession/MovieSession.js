@@ -2,6 +2,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { fetchData } from "../../services/api";
 import { useFetch } from "../../hooks/useFetch";
+import { useBookingAccess } from "../../hooks/useBookingAccess";
 
 import { getToday, getNextDays } from "../../utils/dateUtils";
 
@@ -36,14 +37,15 @@ function groupSessionsByHall(sessions) {
     }));
 }
 
-function SessionTicket({ session }) {
+function SessionTicket({ session, requestBooking }) {
     return (
         <article
             className={`screening-ticket ${
                 session.isSoldOut ? "screening-ticket-sold-out" : ""
             }`}
+            onClick={() => requestBooking(session.id)}
             aria-label={`${session.time} screening, ${session.format.name}, ${session.language.name}`}
-        >
+        >   
             <div className="screening-ticket-main">
                 <time
                     className="text-h2"
@@ -84,6 +86,8 @@ function SessionTicket({ session }) {
 function MovieSession({ movieId, isAgeRestricted, minAge }) {
     const [date, setDate] = useState(getToday);
 
+    const { requestBooking } = useBookingAccess();
+
     const getSessions = useCallback(() => {
         return fetchData(
             `movies/${movieId}/sessions?date=${date}`
@@ -96,18 +100,17 @@ function MovieSession({ movieId, isAgeRestricted, minAge }) {
         error,
     } = useFetch(getSessions);
 
-    const venueSessions = sessionsData?.data ?? [];
     const dates = getNextDays(DATE_COUNT);
 
     const venues = useMemo(
         () =>
-            venueSessions.map((venueSession) => ({
+            (sessionsData?.data ?? []).map((venueSession) => ({
                 ...venueSession,
                 halls: groupSessionsByHall(
                     venueSession.sessions ?? []
                 ),
             })),
-        [venueSessions]
+        [sessionsData?.data]
     );
 
     if (isAgeRestricted) {
@@ -224,6 +227,7 @@ function MovieSession({ movieId, isAgeRestricted, minAge }) {
                                                     <SessionTicket
                                                         key={session.id}
                                                         session={session}
+                                                        requestBooking={requestBooking}
                                                     />
                                                 ))}
                                             </div>

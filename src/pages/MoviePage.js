@@ -1,5 +1,6 @@
-import { useParams } from "react-router-dom";
-import { useCallback } from "react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useCallback, useEffect } from "react";
+import { useBookingAccess } from "../hooks/useBookingAccess";
 import { fetchData } from "../services/api";
 import { useFetch } from "../hooks/useFetch";
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -43,6 +44,10 @@ function MoviePage() {
     const { id } = useParams();
     const { user } = useAuthContext();
 
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { requestBooking } = useBookingAccess();
+
     const getMovie = useCallback(() => {
         return fetchData(`movies/${id}`);
     }, [id]);
@@ -52,6 +57,22 @@ function MoviePage() {
         loading,
         error
     } = useFetch(getMovie);
+
+    useEffect(() => {
+        const { openBooking, sessionId } = location.state ?? {};
+
+        if (!openBooking || !sessionId) {
+            return;
+        }
+
+        // Clear navigation state to prevent reopening on refresh.
+        navigate(location.pathname, {
+            replace: true,
+            state: null,
+        });
+
+        requestBooking(sessionId);
+    }, [location.state, location.pathname, navigate, requestBooking]);
 
     if (loading) {
         return <p>Loading...</p>;

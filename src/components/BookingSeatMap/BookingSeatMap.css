@@ -1,0 +1,134 @@
+
+/* seat map */
+
+.booking-view-holder {
+    min-width: 720px;
+    margin: 20px 0;
+}
+
+.booking-view {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.screen {
+    background: var(--color-bg-raised);
+    padding: 0 20px;
+    border-radius: 0 0 20px 20px;
+
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto 20px;
+}
+
+/* seat section */
+
+.seat-section {
+    padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+.seat-section-rows {
+    flex-direction: column;
+}
+.seat-section-rows, 
+.seat-row,
+.seat-row-map,
+.seat-position {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.row-label {
+    padding: 5px;
+}
+
+/* seat buttons */
+.seat {
+    color: var(--color-text-primary);
+    border-radius: 10px;
+    
+    width: 52px;
+    height: 52px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition:
+        background-color 0.15s ease,
+        font-size 0.15s ease,
+}
+
+.seat, .seat-legend {
+    box-shadow: 0px 1px 2px 0px var(--shadow);
+    border: 1px solid var(--color-text-disabled);
+    background: var(--color-bg-card);
+}
+.seat-sold {
+    color: var(--color-text-disabled);
+    border: 1px solid var(--color-bg-page);
+}
+.seat-selected {
+    background: var(--color-red);
+    border: 1px solid var(--color-bg-page);
+    font-size: 18px !important;
+}
+.held {
+    color: var(--color-text-secondary);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+.held::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    
+    background: repeating-linear-gradient(
+        -37deg,
+        var(--color-bg-raised) 0px 10px,
+        var(--color-text-disabled) 10px 20px
+    );
+
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.aisle {
+    width: 16px;
+    height: 32px;
+}
+
+/* legends */
+.seats-types {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    justify-content: center;
+}
+.seats-types li {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    list-style-type: none;
+}
+.seat-legend {
+    display:inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 5px;
+}
+.seats-types .held {
+    background: repeating-linear-gradient(
+        -45deg,
+        var(--color-bg-raised) 0px 3px,
+        var(--color-text-disabled) 3px 6px
+    );
+    opacity: 0.6;
+}

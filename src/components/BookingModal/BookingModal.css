@@ -1,0 +1,186 @@
+.booking-modal {
+    min-width: 980px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+/* header */
+.booking-header {
+    display: flex;
+    justify-content: space-between;
+}
+.booking-header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.booking-timer {
+    height: 100%;
+    background: var(--color-bg-card);
+    padding: 8px 14px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+}
+
+/* content */
+.booking-content {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* Booking content layout */
+.booking-content {
+    display: flex;
+    align-items: stretch;
+    min-width: 0;
+    min-height: 0;
+}
+
+/* Full-height vertical divider between seat map and summary */
+.booking-vertical-divider {
+    align-self: stretch;
+    flex: 0 0 1px;
+    width: 1px;
+    background: var(--color-bg-card);
+    margin: 0 20px;
+}
+
+/* Selection summary */
+.booking-meta {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    width: 321px;
+    min-width: 0;
+    min-height: 0;
+    flex-shrink: 0;
+}
+
+.booking-meta-content,
+.booking-meta-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.booking-meta-footer {
+    flex-shrink: 0;
+}
+
+/* Vertically scrollable seat cards */
+.selected-seats-scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    max-height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.selected-seats-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* Individual selected seat */
+.selected-seat-holder {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    width: 100%;
+    flex-shrink: 0;
+    box-sizing: border-box;
+
+    background: var(--color-bg-card);
+    padding: 15px;
+    border-radius: 16px;
+}
+
+/* Seat code, price and remove button */
+.selected-seat-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.selected-seat-component {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.seat-remove-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 4px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.seat-close-icon {
+    display: block;
+    width: 8px;
+    height: 8px;
+    color: var(--color-text-secondary);
+}
+
+/* Ticket type buttons */
+.selected-seat-discounts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.discount-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 0;
+    height: 32px;
+    padding: 0 4px;
+    box-sizing: border-box;
+
+    border: 1px solid transparent;
+    border-radius: var(--radius-round);
+    background: var(--color-bg-raised);
+    color: var(--color-text-primary);
+
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* Selected ticket type */
+.discount-btn.active {
+    background: var(--color-red);
+}
+
+/* Disabled Child ticket */
+.discount-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Subtotal */
+.booking-total-holder {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5px;
+}

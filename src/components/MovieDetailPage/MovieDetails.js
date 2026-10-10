@@ -46,12 +46,7 @@ function MovieDetails({movie}) {
                     FORMATS
                 </div>
                 <div className="text-label-m">
-                    {movie.formats.map((format) => (
-                        <>
-                            {format.name}
-                            {", "}
-                        </>
-                    ))}
+                    {movie.formats.map((format) => format.name).join(", ")}
                 </div>
             </div>
             <div className="detail-section">
