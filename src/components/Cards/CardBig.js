@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 import { useMovies } from "../../hooks/useMovies";
 
 import "./Card.css";
@@ -42,12 +44,12 @@ function CardBig() {
                                 From ₾ {card.fromPrice}
                             </span>
 
-                            <button
-                                className="btn-red text-button"
-                                type="button"
+                            <Link
+                                className="btn-red text-button link-button"
+                                to={`/movie/${card.slug}`}
                             >
-                                Buy Ticket
-                            </button>
+                                Buy tickets
+                            </Link>
                         </div>
                     </div>
                 </article>

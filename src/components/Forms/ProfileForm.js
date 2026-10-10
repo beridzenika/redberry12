@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
+import {
+    getInitialProfileValues,
+    sanitizeMobileNumber,
+    validateFullName,
+    validateGeorgianMobileNumber,
+} from "../../utils/profileUtils";
+
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useFilterOptions } from "../../hooks/useFilterOptions";
 import { useProfile } from "../../hooks/useProfile";
@@ -9,19 +16,6 @@ import { ReactComponent as CalendarIcon } from "../../assets/icons/Calendar.svg"
 import { ReactComponent as OpenIcon } from "../../assets/icons/Open.svg";
 
 import "./Modals.css";
-
-const getInitialValues = (user) => ({
-    fullName: user?.fullName || "",
-    email: user?.email || "",
-    mobileNumber: user?.mobileNumber || "",
-    dateOfBirth: user?.dateOfBirth || "",
-    preferredVenueId: user?.preferredVenue?.id
-        ? String(user.preferredVenue.id)
-        : "",
-});
-
-const sanitizeMobileNumber = (value) =>
-    value.replace(/\s/g, "");
 
 function ProfileForm() {
     const { user } = useAuthContext();
@@ -42,17 +36,17 @@ function ProfileForm() {
     } = useFilterOptions();
 
     const [values, setValues] = useState(
-        () => getInitialValues(user)
+        () => getInitialProfileValues(user)
     );
 
     const [initialValues, setInitialValues] = useState(
-        () => getInitialValues(user)
+        () => getInitialProfileValues(user)
     );
 
     const [touched, setTouched] = useState({});
 
     useEffect(() => {
-        const nextValues = getInitialValues(user);
+        const nextValues = getInitialProfileValues(user);
 
         setValues(nextValues);
         setInitialValues(nextValues);
@@ -135,32 +129,15 @@ function ProfileForm() {
     };
 
     const errors = useMemo(() => {
-        const mobileNumber = sanitizeMobileNumber(
-            values.mobileNumber.trim()
-        );
 
         return {
             fullName:
                 fieldErrors.fullName ||
-                (!values.fullName.trim()
-                    ? "Name is required"
-                    : values.fullName.trim().length < 3
-                        ? "Name must be at least 3 characters"
-                        : values.fullName.trim().length > 50
-                            ? "Name must not exceed 50 characters"
-                            : ""),
+                validateFullName(values.fullName),
 
             mobileNumber:
                 fieldErrors.mobileNumber ||
-                (!mobileNumber
-                    ? "Mobile number is required"
-                    : !/^\d+$/.test(mobileNumber)
-                        ? "Please enter a valid Georgian mobile number"
-                        : !mobileNumber.startsWith("5")
-                            ? "Georgian mobile numbers must start with 5"
-                            : mobileNumber.length !== 9
-                                ? "Mobile number must be exactly 9 digits"
-                                : ""),
+                validateGeorgianMobileNumber(values.mobileNumber),
 
             dateOfBirth:
                 fieldErrors.dateOfBirth ||

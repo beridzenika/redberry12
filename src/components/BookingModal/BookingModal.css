@@ -70,7 +70,35 @@
 }
 
 .booking-meta-footer {
+    margin-top: 12px;
     flex-shrink: 0;
+}
+
+/* booking steps buttons */
+.booking-steps {
+    width: 100%;
+    min-width: 720px;
+    height: 33px;
+
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 1fr 1fr;
+
+    border-radius: var(--radius-round);
+    background: var(--color-bg-card);
+}
+.booking-step {
+    background: none;
+    border: none;
+    border-radius: var(--radius-round);
+
+    color: var(--color-text-primary);
+
+    transition:
+        background 0.2s ease
+}
+.booking-step.active {
+    background: var(--color-red);
 }
 
 /* Vertically scrollable seat cards */

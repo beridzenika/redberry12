@@ -56,7 +56,7 @@ function HeroSlide({ movie, className }) {
 
                 <div className="button-holder">
                     <Link
-                        className="btn-red text-button hero-button"
+                        className="btn-red text-button link-button"
                         to={`/movie/${movie.slug}`}
                     >
                         <TicketIcon aria-hidden="true" />
@@ -64,7 +64,7 @@ function HeroSlide({ movie, className }) {
                     </Link>
 
                     <Link
-                        className="btn-gray text-button hero-button"
+                        className="btn-gray text-button link-button"
                         to="/sessions"
                     >
                         All sessions

@@ -8,6 +8,7 @@ import ModalOverlay from "../Modal/ModalOverlay";
 import BookingSessionDetails from "./BookingSessionDetails";
 import BookingSeatMap from "../BookingSeatMap/BookingSeatMap";
 import BookingSelectionSummary from "./BookingSelectionSummary";
+import BookingCheckoutForm from "../BookingCheckout/BookingCheckoutForm";
 
 import "./BookingModal.css";
 
@@ -38,6 +39,7 @@ function BookingModal() {
 
     const [selectedSeatTypes, setSelectedSeatTypes] = useState({});
     const [refreshKey, setRefreshKey] = useState(0);
+    const [currentStep, setCurrentStep] = useState("seats");
 
     const sessionId = bookingSessionId;
     const isOpen = Boolean(modals.booking && sessionId);
@@ -68,6 +70,7 @@ function BookingModal() {
         async function loadSeats() {
             setSeatMap(null);
             setSelectedSeatTypes({});
+            setCurrentStep("seats");
             setSeatsLoading(true);
             setSeatsError(null);
 
@@ -142,14 +145,14 @@ function BookingModal() {
             .filter((seat) => selectedSeatTypes[seat.id])
             .map((seat) => {
                 const ticketType = selectedSeatTypes[seat.id];
-
                 const basePrice = Number(seat.price ?? seatPrice);
                 const multiplier = TICKET_MULTIPLIERS[ticketType] ?? 1;
 
                 return {
                     ...seat,
                     ticketType,
-                    price: Math.round(basePrice * multiplier * 100) / 100,
+                    price:
+                        Math.round(basePrice * multiplier * 100) / 100,
                 };
             });
     }, [allSeats, selectedSeatTypes, seatPrice]);
@@ -170,6 +173,7 @@ function BookingModal() {
 
     function handleClose() {
         setSelectedSeatTypes({});
+        setCurrentStep("seats");
         closeModal("booking");
     }
 
@@ -228,6 +232,31 @@ function BookingModal() {
         if (selectedSeats.length === 0) {
             return;
         }
+
+        setCurrentStep("checkout");
+    }
+
+    function handleBackToSeats() {
+        setCurrentStep("seats");
+    }
+
+    function handleCheckoutSubmit(details) {
+        if (selectedSeats.length === 0) {
+            setCurrentStep("seats");
+            return;
+        }
+
+        const bookingData = {
+            sessionId,
+            customer: details,
+            seats: selectedSeats.map((seat) => ({
+                seatId: seat.id,
+                ticketType: seat.ticketType,
+                price: seat.price,
+            })),
+            subtotal,
+        };
+        console.log("Booking details:", bookingData);
     }
 
     if (!isOpen) {
@@ -247,17 +276,65 @@ function BookingModal() {
                 />
 
                 <div className="booking-content">
-                    
-                    <BookingSeatMap
-                        seatMap={seatMap}
-                        loading={seatsLoading}
-                        error={seatsError}
-                        selectedSeatIds={selectedSeatIds}
-                        onSeatClick={handleSeatClick}
-                        onRetry={() =>
-                            setRefreshKey((key) => key + 1)
-                        }
-                    />
+                    <div className="booking-main">
+                        <div
+                            className="booking-steps"
+                            aria-label="Booking steps"
+                        >
+                            <button
+                                type="button"
+                                className={`booking-step text-label-s ${
+                                    currentStep === "seats" ? "active" : ""
+                                }`}
+                                aria-current={
+                                    currentStep === "seats"
+                                        ? "step"
+                                        : undefined
+                                }
+                                onClick={handleBackToSeats}
+                            >
+                                SEATS
+                            </button>
+                            <button
+                                type="button"
+                                className={`booking-step text-label-s ${
+                                    currentStep === "checkout" ? "active" : ""
+                                }`}
+                                aria-current={
+                                    currentStep === "checkout"
+                                        ? "step"
+                                        : undefined
+                                }
+                                disabled={selectedSeats.length === 0}
+                                onClick={handleNext}
+                            >
+                                CHECKOUT
+                            </button>
+                        </div>
+
+                        <div className="booking-step-content">
+                            {currentStep === "seats" ? (
+                                <BookingSeatMap
+                                    seatMap={seatMap}
+                                    loading={seatsLoading}
+                                    error={seatsError}
+                                    selectedSeatIds={selectedSeatIds}
+                                    onSeatClick={handleSeatClick}
+                                    onRetry={() =>
+                                        setRefreshKey((key) => key + 1)
+                                    }
+                                />
+                            ) : (
+                                <BookingCheckoutForm
+                                    session={session}
+                                    selectedSeats={selectedSeats}
+                                    subtotal={subtotal}
+                                    onSubmit={handleCheckoutSubmit}
+                                    onBack={handleBackToSeats}
+                                />
+                            )}
+                        </div>
+                    </div>
 
                     <div
                         className="booking-vertical-divider"
@@ -271,7 +348,16 @@ function BookingModal() {
                         childAllowed={childAllowed}
                         onTicketTypeChange={handleTicketTypeChange}
                         onRemoveSeat={handleRemoveSeat}
-                        onNext={handleNext}
+                        onNext={
+                            currentStep === "seats"
+                                ? handleNext
+                                : handleBackToSeats
+                        }
+                        actionLabel={
+                            currentStep === "seats"
+                                ? "Next: Checkout"
+                                : "Back to Seats"
+                        }
                     />
                 </div>
             </article>

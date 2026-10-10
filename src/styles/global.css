@@ -154,6 +154,11 @@ h1, h2, h3, h4, h5, h6, p {
     color: var(--color-text-primary);
 }
 
+.link-button {
+    text-decoration: none;
+    height: min-content !important;
+}
+
 /* badges */
 .badge-red, .badge-gray {
     padding: 6px 12px;
