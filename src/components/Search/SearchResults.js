@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 import { ReactComponent as PopCornIcon } from "../../assets/icons/PopCorn.svg";
 import { ReactComponent as SearchIcon } from "../../assets/icons/MagnifyingGlass.svg";
 
@@ -105,29 +107,39 @@ function SearchResults({ results, loading, error, query }) {
             </div>
             <ul className="results-list">
                 {results.map((item) => (
-                <li key={item.id} className="result-item">
-                    <img 
-                        src={item.posterUrl} 
-                        alt={`${item.title} poster`}
-                        className="result-poster" 
-                    />
-                    <div className="result-content">
-                        <h4 className="text-label-m">
-                            <HighlightedTitle
-                                title={item.title}
-                                query={query}
+                    <li key={item.id} className="result-item">
+                        <Link
+                            to={`/movie/${item.slug}`}
+                            className="result-link"
+                        >
+                            <img
+                                src={item.posterUrl}
+                                alt={`${item.title} poster`}
+                                className="result-poster"
                             />
-                        </h4>
-                        <span className="text-body-s">
-                            {item.kind.charAt(0).toUpperCase() + item.kind.slice(1)}{" · "}
-                            {item.ageRating?.code}{" · "}
-                            {item.runtimeMinutes}{" min"}
-                        </span>
-                    </div>
-                    <div className="text-label-m">
-                        From ₾ {item.fromPrice}
-                    </div>
-                </li>
+
+                            <div className="result-content">
+                                <h4 className="text-label-m">
+                                    <HighlightedTitle
+                                        title={item.title}
+                                        query={query}
+                                    />
+                                </h4>
+
+                                <span className="text-body-s">
+                                    {item.kind.charAt(0).toUpperCase() + item.kind.slice(1)}
+                                    {" · "}
+                                    {item.ageRating?.code}
+                                    {" · "}
+                                    {item.runtimeMinutes} min
+                                </span>
+                            </div>
+
+                            <div className="text-label-m">
+                                From ₾ {item.fromPrice}
+                            </div>
+                        </Link>
+                    </li>
                 ))}
             </ul>
         </div>
