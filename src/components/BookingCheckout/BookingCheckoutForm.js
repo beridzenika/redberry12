@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo, useRef } from "react";
 
 import {
@@ -9,7 +8,6 @@ import {
 } from "../../utils/profileUtils";
 
 import { useAuthContext } from "../../hooks/useAuthContext";
-
 import AuthInput from "../Forms/AuthInput";
 
 import "./BookingCheckout.css";
@@ -28,9 +26,7 @@ function validateCardNumber(value) {
 function validateExpiry(value) {
     const match = value.match(/^(0[1-9]|1[0-2])\/(\d{2})$/);
 
-    if (!match) {
-        return false;
-    }
+    if (!match) return false;
 
     const month = Number(match[1]);
     const year = 2000 + Number(match[2]);
@@ -45,12 +41,33 @@ function validateExpiry(value) {
     );
 }
 
-function BookingCheckoutForm({ onSubmit }) {
+function getErrorMessage(error) {
+    if (Array.isArray(error)) {
+        return error[0] ?? "";
+    }
+
+    return error ?? "";
+}
+
+function BookingCheckoutForm({
+    session,
+    selectedSeats,
+    subtotal,
+    onSubmit,
+    onBack,
+    submitting = false,
+    fieldErrors = {},
+    submitError = "",
+    onClearErrors,
+}) {
     const { user } = useAuthContext();
-    const [values, setValues] = useState(() => getInitialValues(user));
-    const [fieldErrors, setFieldErrors] = useState({});
+
+    const [values, setValues] = useState(() =>
+        getInitialValues(user)
+    );
+
+    const [localFieldErrors, setLocalFieldErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const submissionLock = useRef(false);
 
@@ -68,52 +85,65 @@ function BookingCheckoutForm({ onSubmit }) {
             values.mobileNumber.trim()
         );
 
-        return {
+        const validationErrors = {
             fullName:
-                fieldErrors.fullName ||
                 validateFullName(values.fullName),
 
-            mobileNumber:
-                fieldErrors.mobileNumber ||
-                validateGeorgianMobileNumber(values.mobileNumber),
+            email:
+                !values.email.trim()
+                    ? "Email is required"
+                    : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                          values.email.trim()
+                      )
+                      ? "Please enter a valid email address"
+                      : "",
 
             mobileNumber:
-                fieldErrors.mobileNumber ||
-                (!mobileNumber
+                !mobileNumber
                     ? "Mobile number is required"
                     : !/^\d+$/.test(mobileNumber)
-                        ? "Please enter a valid Georgian mobile number"
-                        : !mobileNumber.startsWith("5")
-                            ? "Georgian mobile numbers must start with 5"
-                            : mobileNumber.length !== 9
-                                ? "Mobile number must be exactly 9 digits"
-                                : ""),
+                      ? "Please enter a valid Georgian mobile number"
+                      : !mobileNumber.startsWith("5")
+                        ? "Georgian mobile numbers must start with 5"
+                        : mobileNumber.length !== 9
+                          ? "Mobile number must be exactly 9 digits"
+                          : validateGeorgianMobileNumber(
+                                values.mobileNumber
+                            ),
 
             cardNumber:
-                fieldErrors.cardNumber ||
-                (!values.cardNumber
+                !values.cardNumber
                     ? "Card number is required"
                     : !validateCardNumber(values.cardNumber)
-                        ? "Card number must contain exactly 16 digits"
-                        : ""),
+                      ? "Card number must contain exactly 16 digits"
+                      : "",
 
             expiry:
-                fieldErrors.expiry ||
-                (!values.expiry
+                !values.expiry
                     ? "Expiry date is required"
                     : !validateExpiry(values.expiry)
-                        ? "Enter a valid future date in MM/YY format"
-                        : ""),
+                      ? "Enter a valid future date in MM/YY format"
+                      : "",
 
             cvv:
-                fieldErrors.cvv ||
-                (!values.cvv
+                !values.cvv
                     ? "CVV is required"
                     : !/^\d{3}$/.test(values.cvv)
-                        ? "CVV must contain exactly 3 digits"
-                        : ""),
+                      ? "CVV must contain exactly 3 digits"
+                      : "",
         };
-    }, [values, fieldErrors]);
+
+        return Object.fromEntries(
+            Object.entries(validationErrors).map(
+                ([field, validationError]) => [
+                    field,
+                    getErrorMessage(fieldErrors[field]) ||
+                        getErrorMessage(localFieldErrors[field]) ||
+                        validationError,
+                ]
+            )
+        );
+    }, [values, fieldErrors, localFieldErrors]);
 
     const isFormValid = Object.values(errors).every(
         (error) => !error
@@ -128,7 +158,6 @@ function BookingCheckoutForm({ onSubmit }) {
 
         if (name === "cardNumber") {
             const digits = value.replace(/\D/g, "").slice(0, 16);
-
             nextValue = digits.replace(/(\d{4})(?=\d)/g, "$1 ");
         }
 
@@ -150,17 +179,19 @@ function BookingCheckoutForm({ onSubmit }) {
             [name]: nextValue,
         }));
 
-        // Clear any previous field-specific error when the user edits it.
-        setFieldErrors((current) => ({
+        setLocalFieldErrors((current) => ({
             ...current,
             [name]: "",
         }));
+
+        // Clear server-side errors after the user edits a field.
+        onClearErrors?.();
     }
 
     async function handleSubmit(event) {
         event.preventDefault();
 
-        if (submissionLock.current || isSubmitting) {
+        if (submissionLock.current || submitting) {
             return;
         }
 
@@ -171,14 +202,15 @@ function BookingCheckoutForm({ onSubmit }) {
         }
 
         submissionLock.current = true;
-        setIsSubmitting(true);
 
         try {
             await onSubmit({
                 customer: {
                     fullName: values.fullName.trim(),
                     email: values.email.trim(),
-                    mobileNumber: values.mobileNumber.trim(),
+                    mobileNumber: sanitizeMobileNumber(
+                        values.mobileNumber.trim()
+                    ),
                 },
                 payment: {
                     cardNumber: values.cardNumber.replace(/\D/g, ""),
@@ -190,22 +222,31 @@ function BookingCheckoutForm({ onSubmit }) {
             console.error("Checkout submission failed:", error);
         } finally {
             submissionLock.current = false;
-            setIsSubmitting(false);
         }
     }
 
     return (
         <section className="booking-checkout">
             <form
+                id="booking-checkout-form"
                 className="auth-form booking-checkout-form"
                 noValidate
                 onSubmit={handleSubmit}
             >
+                {submitError && (
+                    <div
+                        className="booking-submit-error"
+                        role="alert"
+                    >
+                        {submitError}
+                    </div>
+                )}
+
                 <AuthInput
                     id="booking-full-name"
                     name="fullName"
                     label="Full Name"
-                    placeholder="e.g. Text"
+                    placeholder="e.g. Jane Doe"
                     value={values.fullName}
                     error={
                         submitted || values.fullName
@@ -223,7 +264,7 @@ function BookingCheckoutForm({ onSubmit }) {
                         name="email"
                         label="Email"
                         type="email"
-                        placeholder="e.g. Text"
+                        placeholder="e.g. jane@example.com"
                         value={values.email}
                         error={
                             submitted || values.email
@@ -305,15 +346,6 @@ function BookingCheckoutForm({ onSubmit }) {
                         autoComplete="cc-csc"
                     />
                 </div>
-
-                {/* Submission is handled by the parent component. */}
-                <button
-                    type="submit"
-                    hidden
-                    disabled={isSubmitting}
-                >
-                    Submit
-                </button>
             </form>
         </section>
     );

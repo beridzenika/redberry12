@@ -142,15 +142,7 @@ export const fetchAuthenticatedData = (url, token) => {
 
 // Booking
 
-export const fetchFilterOptions = () => {
-    return fetchData("filter-options");
-};
-
-export const createSessionHold = (
-    sessionId,
-    seats,
-    token
-) => {
+export const createSessionHold = (sessionId, seats, token) => {
     return apiRequest(`/sessions/${sessionId}/holds`, {
         method: "POST",
         headers: {
@@ -164,6 +156,18 @@ export const createSessionHold = (
                 ticketType: seat.ticketType,
             })),
         }),
+    });
+};
+
+export const createOrder = (orderData, token) => {
+    return apiRequest("/orders", {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
     });
 };
 

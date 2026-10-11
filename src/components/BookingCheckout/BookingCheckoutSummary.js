@@ -2,7 +2,7 @@ function BookingCheckoutSummary({
     session,
     selectedSeats,
     subtotal,
-    onCompleteOrder,
+    submitting = false,
 }) {
     const movieTitle =
         session?.movie?.title ?? session?.movieTitle ?? "Movie";
@@ -90,14 +90,13 @@ function BookingCheckoutSummary({
                         ₾ {Number(subtotal).toFixed(2)}
                     </p>
                 </div>
-
                 <button
-                    type="button"
+                    type="submit"
+                    form="booking-checkout-form"
                     className="auth-btn"
-                    disabled={selectedSeats.length === 0}
-                    onClick={onCompleteOrder}
+                    disabled={selectedSeats.length === 0 || submitting}
                 >
-                    Pay: Complete order
+                    {submitting ? "Processing..." : "Pay & Complete Order"}
                 </button>
             </div>
         </footer>

@@ -79,13 +79,13 @@
     border: 1px solid var(--color-bg-page);
     font-size: 18px !important;
 }
-.held {
+.seat-held {
     color: var(--color-text-secondary);
     border: none;
     position: relative;
     overflow: hidden;
 }
-.held::before {
+.seat-held::before {
     content: "";
     position: absolute;
     inset: 0;

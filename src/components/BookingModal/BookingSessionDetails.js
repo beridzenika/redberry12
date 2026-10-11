@@ -4,6 +4,9 @@ function BookingSessionDetails({
     session,
     loading,
     error,
+    countdown,
+    holdExpiresAt,
+    holdExpired,
 }) {
     if (loading && !session) {
         return (
@@ -56,8 +59,18 @@ function BookingSessionDetails({
                     SEATS HELD
                 </span>
 
-                <span className="text-button">
-                    —
+                <span
+                    className={`text-button ${
+                        holdExpired ? "text-red" : ""
+                    }`}
+                    role="timer"
+                    aria-live="off"
+                >
+                    {!holdExpiresAt
+                        ? "—"
+                        : holdExpired
+                          ? "EXPIRED"
+                          : countdown}
                 </span>
             </div>
         </header>

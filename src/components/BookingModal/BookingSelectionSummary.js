@@ -1,21 +1,35 @@
-
 import { ReactComponent as CloseIcon } from "../../assets/icons/Close.svg";
-
-const TICKET_OPTIONS = [
-    { type: "child", label: "Child", discount: "60%" },
-    { type: "student", label: "Student", discount: "75%" },
-    { type: "adult", label: "Adult", discount: "100%" },
-];
 
 function BookingSelectionSummary({
     MAX_SEATS,
     selectedSeats,
     subtotal,
-    childAllowed = true,
+    ticketTypes = [],
+    isTicketTypeAllowed,
+    canCheckout,
     onTicketTypeChange,
     onRemoveSeat,
     onNext,
 }) {
+    const hasInvalidTicketType = selectedSeats.some((seat) => {
+        const selectedTicket = ticketTypes.find(
+            (option) => option.slug === seat.ticketType
+        );
+
+        if (!selectedTicket) return true;
+
+        return (
+            typeof isTicketTypeAllowed === "function" &&
+            !isTicketTypeAllowed(selectedTicket.slug)
+        );
+    });
+
+    const isCheckoutDisabled =
+        !canCheckout ||
+        selectedSeats.length === 0 ||
+        hasInvalidTicketType;
+
+
     return (
         <footer className="booking-meta">
             <div className="booking-meta-content">
@@ -48,7 +62,7 @@ function BookingSelectionSummary({
 
                                     <div className="selected-seat-component">
                                         <span className="text-label-s">
-                                            ₾ {seat.price.toFixed(2)}
+                                            ₾ {Number(seat.price).toFixed(2)}
                                         </span>
 
                                         <button
@@ -70,41 +84,69 @@ function BookingSelectionSummary({
                                 <hr className="page-line" />
 
                                 <div className="selected-seat-discounts">
-                                    {TICKET_OPTIONS.map((option) => {
-                                        const disabled =
-                                            option.type === "child" &&
-                                            !childAllowed;
+                                    {ticketTypes.map((option) => {
+                                        const allowed =
+                                            typeof isTicketTypeAllowed ===
+                                            "function"
+                                                ? isTicketTypeAllowed(
+                                                      option.slug
+                                                  )
+                                                : true;
 
                                         const active =
-                                            seat.ticketType === option.type;
+                                            seat.ticketType === option.slug;
+
+                                        const multiplier = Number(
+                                            option.priceRatio ?? 1
+                                        );
+
+                                        const percentage = Math.round(
+                                            multiplier * 100
+                                        );
 
                                         return (
                                             <button
-                                                key={option.type}
+                                                key={option.id ?? option.slug}
                                                 type="button"
                                                 className={`discount-btn text-body-s ${
                                                     active ? "active" : ""
                                                 }`}
-                                                disabled={disabled}
+                                                disabled={!allowed && !active}
                                                 aria-pressed={active}
                                                 onClick={() =>
                                                     onTicketTypeChange(
                                                         seat.id,
-                                                        option.type
+                                                        option.slug
                                                     )
                                                 }
                                                 title={
-                                                    disabled
-                                                        ? "Child tickets are not allowed for this film"
-                                                        : `${option.label} ${option.discount}`
+                                                    !allowed
+                                                        ? option.note ||
+                                                          `${option.name} tickets are not available for this film`
+                                                        : option.note ||
+                                                          `${option.name}: ${percentage}% of the base price`
                                                 }
                                             >
-                                                {option.label}{" "}
-                                                {option.discount}
+                                                {option.name} {percentage}%
                                             </button>
                                         );
                                     })}
                                 </div>
+
+                                {ticketTypes.find(
+                                    (option) =>
+                                        option.slug === seat.ticketType
+                                )?.note && (
+                                    <p className="text-body-s text-gray">
+                                        {
+                                            ticketTypes.find(
+                                                (option) =>
+                                                    option.slug ===
+                                                    seat.ticketType
+                                            ).note
+                                        }
+                                    </p>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -118,15 +160,20 @@ function BookingSelectionSummary({
                     </span>
 
                     <p className="text-h1">
-                        ₾ {subtotal}
+                        ₾ {Number(subtotal).toFixed(2)}
                     </p>
                 </div>
 
                 <button
                     type="button"
                     className="auth-btn"
-                    disabled={selectedSeats.length === 0}
+                    disabled={isCheckoutDisabled}
                     onClick={onNext}
+                    title={
+                        isCheckoutDisabled
+                            ? "Choose valid ticket types and seats before checkout."
+                            : "Continue to checkout"
+                    }
                 >
                     Next: Checkout
                 </button>

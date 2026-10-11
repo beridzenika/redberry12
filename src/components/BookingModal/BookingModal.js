@@ -1,8 +1,15 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 
 import { fetchData } from "../../services/api";
 import { useFetch } from "../../hooks/useFetch";
 import { useModal } from "../../hooks/useModal";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import { useFilterOptions } from "../../hooks/useFilterOptions";
+
+import { useSeatMap } from "../../hooks/useSeatMap";
+import { useSeatHold } from "../../hooks/useSeatHold";
+import { flattenSeats } from "../../utils/seatUtils";
+import { useCheckout } from "../../hooks/useCheckout";
 
 import ModalOverlay from "../Modal/ModalOverlay";
 import BookingSessionDetails from "./BookingSessionDetails";
@@ -13,37 +20,52 @@ import BookingCheckoutForm from "../BookingCheckout/BookingCheckoutForm";
 
 import "./BookingModal.css";
 
-const MAX_SEATS = 3;
-
-const TICKET_TYPES = {
-    ADULT: "adult",
-    CHILD: "child",
-    STUDENT: "student",
-};
-
-const TICKET_MULTIPLIERS = {
-    adult: 1,
-    child: 0.6,
-    student: 0.75,
-};
-
 function BookingModal() {
+    const { modals, closeModal, bookingSessionId } = useModal();
+    const { user, token } = useAuthContext();
+
     const {
-        modals,
-        closeModal,
-        bookingSessionId,
-    } = useModal();
+        data: filterOptions,
+        loading: optionsLoading,
+        error: optionsError,
+    } = useFilterOptions();
 
-    const [seatMap, setSeatMap] = useState(null);
-    const [seatsLoading, setSeatsLoading] = useState(false);
-    const [seatsError, setSeatsError] = useState(null);
-
-    const [selectedSeatTypes, setSelectedSeatTypes] = useState({});
-    const [refreshKey, setRefreshKey] = useState(0);
     const [currentStep, setCurrentStep] = useState("seats");
+    const [lostSeatKeys, setLostSeatKeys] = useState([]);
 
     const sessionId = bookingSessionId;
     const isOpen = Boolean(modals.booking && sessionId);
+
+    const expirationHandledRef = useRef(false);
+
+    const maxSeatsPerOrder = Number(
+        filterOptions?.maxSeatsPerOrder ?? 3
+    );
+
+    const holdMinutes = Number(
+        filterOptions?.holdMinutes ?? 8
+    );
+
+    const ticketTypes = useMemo(
+        () =>
+            Array.isArray(filterOptions?.ticketTypes)
+                ? filterOptions.ticketTypes
+                : [],
+        [filterOptions?.ticketTypes]
+    );
+
+    const ticketTypeBySlug = useMemo(
+        () =>
+            Object.fromEntries(
+                ticketTypes.map((type) => [type.slug, type])
+            ),
+        [ticketTypes]
+    );
+
+    const defaultTicketTypeSlug =
+        ticketTypes.find((type) => type.slug === "adult")?.slug ??
+        ticketTypes[0]?.slug ??
+        null;
 
     const getSession = useCallback(() => {
         if (!sessionId || !isOpen) {
@@ -61,75 +83,24 @@ function BookingModal() {
 
     const session = sessionResponse?.data ?? sessionResponse;
 
-    useEffect(() => {
-        if (!isOpen) {
-            return;
-        }
+    const {
+        seatMap,
+        selectedSeatTypes,
+        setSelectedSeatTypes,
+        seatsLoading,
+        seatsError,
+        refreshSeats,
+    } = useSeatMap({
+        sessionId,
+        isOpen,
+        defaultTicketTypeSlug,
+        lostSeatKeys,
+    });
 
-        let cancelled = false;
-
-        async function loadSeats() {
-            setSeatMap(null);
-            setSelectedSeatTypes({});
-            setCurrentStep("seats");
-            setSeatsLoading(true);
-            setSeatsError(null);
-
-            try {
-                const response = await fetchData(
-                    `sessions/${sessionId}/seats`
-                );
-
-                const data = response?.data ?? response;
-
-                if (!Array.isArray(data?.sections)) {
-                    throw new Error("Invalid seat map response.");
-                }
-                if (cancelled) {
-                    return;
-                }
-                setSeatMap(data);
-
-                const mine = data.sections.flatMap((section) =>
-                    section.rows.flatMap((row) =>
-                        row.seats
-                            .filter((seat) => seat.isMine)
-                            .map((seat) => seat.id)
-                    )
-                );
-
-                setSelectedSeatTypes(
-                    Object.fromEntries(
-                        mine.map((id) => [id, TICKET_TYPES.ADULT])
-                    )
-                );
-            } catch (error) {
-                if (!cancelled) {
-                    setSeatsError(error);
-                }
-            } finally {
-                if (!cancelled) {
-                    setSeatsLoading(false);
-                }
-            }
-        }
-
-        loadSeats();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [isOpen, refreshKey, sessionId]);
-
-    const allSeats = useMemo(() => {
-        if (!seatMap?.sections) {
-            return [];
-        }
-
-        return seatMap.sections.flatMap((section) =>
-            section.rows.flatMap((row) => row.seats)
-        );
-    }, [seatMap]);
+    const allSeats = useMemo(
+        () => flattenSeats(seatMap),
+        [seatMap]
+    );
 
     const seatPrice = Number(session?.price ?? 0);
 
@@ -141,26 +112,47 @@ function BookingModal() {
         [allSeats, selectedSeatTypes]
     );
 
-    const selectedSeats = useMemo(() => {
-        return allSeats
-            .filter((seat) => selectedSeatTypes[seat.id])
-            .map((seat) => {
-                const ticketType = selectedSeatTypes[seat.id];
-                const basePrice = Number(seat.price ?? seatPrice);
-                const multiplier = TICKET_MULTIPLIERS[ticketType] ?? 1;
+    const selectedSeats = useMemo(
+        () =>
+            allSeats
+                .filter((seat) => selectedSeatTypes[seat.id])
+                .map((seat) => {
+                    const ticketType = selectedSeatTypes[seat.id];
+                    const config = ticketTypeBySlug[ticketType];
 
-                return {
-                    ...seat,
-                    ticketType,
-                    price:
-                        Math.round(basePrice * multiplier * 100) / 100,
-                };
-            });
-    }, [allSeats, selectedSeatTypes, seatPrice]);
+                    const basePrice = Number(
+                        seat.price ?? seatPrice
+                    );
 
-    const subtotal = selectedSeats.reduce(
-        (total, seat) => total + seat.price,
-        0
+                    const multiplier = Number(
+                        config?.priceRatio ?? 1
+                    );
+
+                    return {
+                        ...seat,
+                        ticketType,
+                        ticketTypeName: config?.name ?? ticketType,
+                        price:
+                            Math.round(
+                                basePrice * multiplier * 100
+                            ) / 100,
+                    };
+                }),
+        [
+            allSeats,
+            selectedSeatTypes,
+            ticketTypeBySlug,
+            seatPrice,
+        ]
+    );
+
+    const subtotal = useMemo(
+        () =>
+            selectedSeats.reduce(
+                (total, seat) => total + seat.price,
+                0
+            ),
+        [selectedSeats]
     );
 
     const ageRating =
@@ -170,15 +162,157 @@ function BookingModal() {
         session?.movie?.age_rating ??
         "";
 
-    const childAllowed = !/(16|18)\s*\+/i.test(String(ageRating));
+    const minimumAgeMatch = String(ageRating).match(
+        /(\d+)\s*\+/
+    );
+
+    const minimumAge = minimumAgeMatch
+        ? Number(minimumAgeMatch[1])
+        : String(ageRating).trim() !== "" &&
+            Number.isFinite(Number(ageRating))
+          ? Number(ageRating)
+          : null;
+
+    const isTicketTypeAllowed = useCallback(
+        (slug) => {
+            const type = ticketTypeBySlug[slug];
+
+            if (!type) return false;
+
+            if (
+                type.blockedFromRatingAge == null ||
+                minimumAge == null
+            ) {
+                return true;
+            }
+
+            return (
+                minimumAge < Number(type.blockedFromRatingAge)
+            );
+        },
+        [ticketTypeBySlug, minimumAge]
+    );
+
+    const isAuthenticated = Boolean(user?.id);
+    const isProfileComplete = user?.profileComplete === true;
+
+    const meetsAgeRestriction =
+        minimumAge === null ||
+        (
+            user?.age != null &&
+            Number.isFinite(Number(user.age)) &&
+            Number(user.age) >= minimumAge
+        );
+
+    const seatsAreValid =
+        selectedSeats.length >= 1 &&
+        selectedSeats.length <= maxSeatsPerOrder &&
+        selectedSeats.every(
+            (seat) =>
+                (
+                    seat.state === "available" ||
+                    seat.isMine === true
+                ) &&
+                isTicketTypeAllowed(seat.ticketType)
+        );
+
+    const canCheckout =
+        isAuthenticated &&
+        isProfileComplete &&
+        meetsAgeRestriction &&
+        seatsAreValid;
+
+    const {
+        createHold,
+        holdId,
+        holdLoading,
+        holdError,
+        setHoldError,
+        holdExpiresAt,
+        countdown,
+        holdExpired,
+        clearHold,
+    } = useSeatHold({
+        sessionId,
+        token,
+        holdMinutes,
+        selectedSeats,
+        allSeats,
+        selectedSeatTypes,
+        setSelectedSeatTypes,
+        setLostSeatKeys,
+        refreshSeats,
+        onSuccess: () => setCurrentStep("checkout"),
+    });
+
+    const {
+        submitOrder,
+        orderLoading,
+        fieldErrors: orderFieldErrors,
+        submitError: orderError,
+        clearErrors: clearOrderErrors,
+    } = useCheckout({
+        token,
+
+        onSuccess: (result) => {
+            closeModal("booking");
+
+            console.log("Order created successfully:", result);
+        },
+
+        onConflict: (message) => {
+            setCurrentStep("seats");
+            setSelectedSeatTypes({});
+            clearHold();
+            setHoldError(message);
+            refreshSeats();
+        },
+    });
+
+    useEffect(() => {
+        if (!holdExpired || expirationHandledRef.current) {
+            return;
+        }
+
+        expirationHandledRef.current = true;
+
+        setCurrentStep("seats");
+        setSelectedSeatTypes({});
+        clearHold();
+
+        setHoldError(
+            "Your hold time expired. Please re-select your seats."
+        );
+
+        refreshSeats();
+    }, [
+        holdExpired,
+        clearHold,
+        refreshSeats,
+        setSelectedSeatTypes,
+        setHoldError,
+    ]);
+
+    useEffect(() => {
+        if (isOpen) return;
+
+        expirationHandledRef.current = false;
+        setCurrentStep("seats");
+        setLostSeatKeys([]);
+        clearHold();
+    }, [isOpen, clearHold]);
 
     function handleClose() {
         setSelectedSeatTypes({});
         setCurrentStep("seats");
+        setLostSeatKeys([]);
+        clearHold();
         closeModal("booking");
     }
 
     function handleSeatClick(seat) {
+        setHoldError("");
+
         setSelectedSeatTypes((current) => {
             if (current[seat.id]) {
                 const next = { ...current };
@@ -187,32 +321,26 @@ function BookingModal() {
             }
 
             if (
+                !defaultTicketTypeSlug ||
+                !isTicketTypeAllowed(defaultTicketTypeSlug) ||
                 seat.state !== "available" ||
-                Object.keys(current).length >= MAX_SEATS
+                Object.keys(current).length >= maxSeatsPerOrder
             ) {
                 return current;
             }
 
             return {
                 ...current,
-                [seat.id]: TICKET_TYPES.ADULT,
+                [seat.id]: defaultTicketTypeSlug,
             };
         });
     }
 
     function handleTicketTypeChange(seatId, ticketType) {
-        if (!Object.hasOwn(TICKET_MULTIPLIERS, ticketType)) {
-            return;
-        }
-
-        if (ticketType === TICKET_TYPES.CHILD && !childAllowed) {
-            return;
-        }
+        if (!isTicketTypeAllowed(ticketType)) return;
 
         setSelectedSeatTypes((current) => {
-            if (!current[seatId]) {
-                return current;
-            }
+            if (!current[seatId]) return current;
 
             return {
                 ...current,
@@ -229,40 +357,49 @@ function BookingModal() {
         });
     }
 
-    function handleNext() {
-        if (selectedSeats.length === 0) {
-            return;
-        }
+    async function handleNext() {
+        if (!canCheckout || holdLoading) return;
 
-        setCurrentStep("checkout");
+        setHoldError("");
+        await createHold();
     }
 
     function handleBackToSeats() {
         setCurrentStep("seats");
     }
 
-    function handleCheckoutSubmit(details) {
-        if (selectedSeats.length === 0) {
+    async function handleCheckoutSubmit(details) {
+        if (!holdExpiresAt || holdExpired || !holdId) {
             setCurrentStep("seats");
+            setSelectedSeatTypes({});
+            clearHold();
+
+            setHoldError(
+                "Your hold time expired. Please re-select your seats."
+            );
+
+            refreshSeats();
             return;
         }
 
-        const bookingData = {
-            sessionId,
-            customer: details,
-            seats: selectedSeats.map((seat) => ({
-                seatId: seat.id,
-                ticketType: seat.ticketType,
-                price: seat.price,
-            })),
-            subtotal,
+        if (!canCheckout || orderLoading) {
+            return;
+        }
+
+        const orderData = {
+            holdId,
+            fullName: details.customer.fullName,
+            email: details.customer.email,
+            mobileNumber: details.customer.mobileNumber,
+            cardNumber: details.payment.cardNumber,
+            expiry: details.payment.expiry,
+            cvv: details.payment.cvv,
         };
-        console.log("Booking details:", bookingData);
+
+        await submitOrder(orderData);
     }
 
-    if (!isOpen) {
-        return null;
-    }
+    if (!isOpen) return null;
 
     return (
         <ModalOverlay open={isOpen} onClose={handleClose}>
@@ -274,6 +411,9 @@ function BookingModal() {
                     session={session}
                     loading={sessionLoading}
                     error={sessionError}
+                    countdown={countdown}
+                    holdExpiresAt={holdExpiresAt}
+                    holdExpired={holdExpired}
                 />
 
                 <div className="booking-content">
@@ -288,42 +428,62 @@ function BookingModal() {
                                     currentStep === "seats" ? "active" : ""
                                 }`}
                                 aria-current={
-                                    currentStep === "seats"
-                                        ? "step"
-                                        : undefined
+                                    currentStep === "seats" ? "step" : undefined
                                 }
                                 onClick={handleBackToSeats}
                             >
                                 SEATS
                             </button>
+
                             <button
                                 type="button"
                                 className={`booking-step text-label-s ${
                                     currentStep === "checkout" ? "active" : ""
                                 }`}
                                 aria-current={
-                                    currentStep === "checkout"
-                                        ? "step"
-                                        : undefined
+                                    currentStep === "checkout" ? "step" : undefined
                                 }
-                                disabled={selectedSeats.length === 0}
-                                onClick={handleNext}
+                                disabled={
+                                    !holdExpiresAt ||
+                                    holdExpired ||
+                                    holdLoading
+                                }
+                                onClick={() => {
+                                    if (holdExpiresAt && !holdExpired) {
+                                        setCurrentStep("checkout");
+                                    }
+                                }}
                             >
                                 CHECKOUT
                             </button>
                         </div>
 
+                        {holdError && (
+                            <div
+                                className="booking-hold-error"
+                                role="alert"
+                            >
+                                {holdError}
+                            </div>
+                        )}
+
+                        {holdLoading && (
+                            <p role="status">
+                                Reserving your seats...
+                            </p>
+                        )}
+
                         <div className="booking-step-content">
                             {currentStep === "seats" ? (
                                 <BookingSeatMap
                                     seatMap={seatMap}
-                                    loading={seatsLoading}
-                                    error={seatsError}
+                                    loading={
+                                        seatsLoading || optionsLoading
+                                    }
+                                    error={seatsError || optionsError}
                                     selectedSeatIds={selectedSeatIds}
                                     onSeatClick={handleSeatClick}
-                                    onRetry={() =>
-                                        setRefreshKey((key) => key + 1)
-                                    }
+                                    onRetry={refreshSeats}
                                 />
                             ) : (
                                 <BookingCheckoutForm
@@ -332,6 +492,10 @@ function BookingModal() {
                                     subtotal={subtotal}
                                     onSubmit={handleCheckoutSubmit}
                                     onBack={handleBackToSeats}
+                                    submitting={orderLoading}
+                                    fieldErrors={orderFieldErrors}
+                                    submitError={orderError}
+                                    onClearErrors={clearOrderErrors}
                                 />
                             )}
                         </div>
@@ -344,10 +508,12 @@ function BookingModal() {
 
                     {currentStep === "seats" ? (
                         <BookingSelectionSummary
-                            MAX_SEATS={MAX_SEATS}
+                            MAX_SEATS={maxSeatsPerOrder}
                             selectedSeats={selectedSeats}
                             subtotal={subtotal}
-                            childAllowed={childAllowed}
+                            ticketTypes={ticketTypes}
+                            isTicketTypeAllowed={isTicketTypeAllowed}
+                            canCheckout={canCheckout && !holdLoading}
                             onTicketTypeChange={handleTicketTypeChange}
                             onRemoveSeat={handleRemoveSeat}
                             onNext={handleNext}
@@ -357,10 +523,7 @@ function BookingModal() {
                             session={session}
                             selectedSeats={selectedSeats}
                             subtotal={subtotal}
-                            onCompleteOrder={() => handleCheckoutSubmit({
-                                // Replace with the customer details collected
-                                // by your checkout form when wiring up the final flow.
-                            })}
+                            submitting={orderLoading}
                         />
                     )}
                 </div>
