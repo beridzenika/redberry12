@@ -27,8 +27,6 @@ function ConfirmationModal() {
     const tickets = order?.tickets ?? [];
 
     const orderReference = order?.reference ?? order?.id ?? "—";
-    const customerEmail = order?.contact?.email;
-
     const formatDateTime = (date, time) => {
         if (!date) return time ?? "Time unavailable";
 

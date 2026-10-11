@@ -1,19 +1,24 @@
 import "./Filters.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getNextDays } from "../../utils/dateUtils";
 
 const DATE_COUNT = 7;
 
-function Filters ({ 
-    options, 
-    filters, 
-    onChange, 
-    loading, 
-    error 
+function Filters({
+    options,
+    filters,
+    onChange,
+    loading,
+    error,
 }) {
     const [selectedDate, setSelectedDate] = useState(
-        filters?.dates?.[0] || null
+        filters?.dates?.[0] ?? null
     );
+
+    // Keep the selected date synchronized with the parent filters.
+    useEffect(() => {
+        setSelectedDate(filters?.dates?.[0] ?? null);
+    }, [filters?.dates]);
 
     if (loading) {
         return (
@@ -26,13 +31,14 @@ function Filters ({
     if (error) {
         return (
             <aside className="session-aside">
-                Failed to load filters: 
+                Failed to load filters:
                 <span className="text-label-s text-red">
                     {error}
                 </span>
             </aside>
         );
     }
+
     if (!options) {
         return null;
     }
@@ -46,22 +52,54 @@ function Filters ({
 
     const dates = getNextDays(DATE_COUNT);
 
+    const safeFilters = {
+        dates: filters?.dates ?? [],
+        venues: filters?.venues ?? [],
+        formats: filters?.formats ?? [],
+        languages: filters?.languages ?? [],
+        timeBands: filters?.timeBands ?? [],
+    };
+
+    // Count every active selection.
+    const activeFilterCount = Object.values(safeFilters).reduce(
+        (total, values) => total + values.length,
+        0
+    );
+
+    const handleCheckboxChange = (type, value) => {
+        const currentValues = safeFilters[type];
+
+        const newValues = currentValues.includes(value)
+            ? currentValues.filter((item) => item !== value)
+            : [...currentValues, value];
+
+        onChange(type, newValues);
+    };
+
+    // Clear all filters in a single parent state update.
+    const handleClearFilters = () => {
+        setSelectedDate(null);
+
+        onChange("clear", {
+            dates: [],
+            venues: [],
+            formats: [],
+            languages: [],
+            timeBands: [],
+        });
+    };
+
+    const handleDateChange = (date) => {
+        if (selectedDate === date) {
+            setSelectedDate(null);
+            onChange("dates", []);
+        } else {
+            setSelectedDate(date);
+            onChange("dates", [date]);
+        }
+    };
+
     const filterGroups = [
-        {
-            key: "venues",
-            label: "VENUE",
-            options: venues,
-            getValue: (venue) => venue.slug,
-            getLabel: (venue) => (
-                <>
-                    {venue.name}
-                    <span className="text-body-s text-gray">
-                        {" · "}
-                        {venue.city}
-                    </span>
-                </>
-            ),
-        },
         {
             key: "formats",
             label: "FORMAT",
@@ -99,43 +137,6 @@ function Filters ({
         },
     ];
 
-    const activeFilterCount =
-        filters.dates.length +
-        filters.venues.length +
-        filters.formats.length +
-        filters.languages.length +
-        filters.timeBands.length;
-
-    const handleCheckboxChange = (type, value) => {
-        const currentValues = filters[type];
-
-        const newValues = currentValues.includes(value)
-            ? currentValues.filter((item) => item !== value)
-            : [...currentValues, value];
-
-        onChange(type, newValues);
-    };
-
-    const handleClearFilters = () => {
-        setSelectedDate(null);
-
-        onChange("dates", []);
-        onChange("venues", []);
-        onChange("formats", []);
-        onChange("languages", []);
-        onChange("timeBands", []);
-    };
-
-    const handleDateChange = (date) => {
-        if (selectedDate === date) {
-            setSelectedDate(null);
-            onChange("dates", []);
-        } else {
-            setSelectedDate(date);
-            onChange("dates", [date]);
-        }
-    };
-
     return (
         <aside className="session-aside">
             <header className="session-header">
@@ -155,7 +156,7 @@ function Filters ({
                 <FilterSection
                     label="VENUE"
                     options={venues}
-                    values={filters.venues}
+                    values={safeFilters.venues}
                     getValue={(venue) => venue.slug}
                     getLabel={(venue) => (
                         <>
@@ -212,12 +213,13 @@ function Filters ({
 
                 <hr className="page-line" />
 
-                {filterGroups.slice(1).map((group, index) => (
+                {/* Format, language, and time of day */}
+                {filterGroups.map((group, index) => (
                     <div key={group.key}>
                         <FilterSection
                             label={group.label}
                             options={group.options}
-                            values={filters[group.key]}
+                            values={safeFilters[group.key]}
                             getValue={group.getValue}
                             getLabel={group.getLabel}
                             onChange={(value) =>
@@ -228,25 +230,24 @@ function Filters ({
                             }
                         />
 
-                        {index <
-                            filterGroups.slice(1).length - 1 && (
+                        {index < filterGroups.length - 1 && (
                             <hr className="page-line" />
                         )}
                     </div>
                 ))}
 
+                {/* Footer */}
                 <div className="filter-footer">
-                    {activeFilterCount > 0 ? 
-                    (
+                    {activeFilterCount > 0 && (
                         <button
                             type="button"
                             className="text-label-s btn-border clear-filter-btn"
                             onClick={handleClearFilters}
-                            disabled={activeFilterCount === 0}
                         >
                             Clear filters
                         </button>
-                    ) : ''}
+                    )}
+
                     <span className="text-body-s text-gray">
                         {activeFilterCount}{" "}
                         {activeFilterCount === 1
@@ -258,7 +259,7 @@ function Filters ({
             </div>
         </aside>
     );
-};
+}
 
 const FilterSection = ({
     label,

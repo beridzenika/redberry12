@@ -32,9 +32,10 @@
     width: 365px;
 }
 .confirm-icon-holder svg {
-    width: 21px;
-    height: 13px;
-    /* fix the size */
+    width: 24px;
+    height: 24px;
+    display: block;
+    flex-shrink: 0;
 }
 
 .confirm-badge {
@@ -65,13 +66,14 @@
     border-radius: 8px;
     
     background-color: red;
-    /* bg-img has the background image styles in global */
 }
+
 .confirm-detail-title {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
+
 .confirmation-summary {
     display: flex;
     flex-direction: column;

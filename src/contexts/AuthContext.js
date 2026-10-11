@@ -5,6 +5,8 @@ import {
     useEffect,
 } from "react";
 
+import { getCurrentUser } from "../services/api";
+
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -13,42 +15,73 @@ export function AuthProvider({ children }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const savedToken =
-            localStorage.getItem("authToken");
+        let cancelled = false;
 
-        const savedUser =
-            localStorage.getItem("authUser");
+        const checkAuth = async () => {
+            const savedToken =
+                localStorage.getItem("authToken");
 
-        if (savedToken && savedUser) {
-            try {
-                setToken(savedToken);
-                setUser(JSON.parse(savedUser));
-            } catch {
-                localStorage.removeItem("authToken");
-                localStorage.removeItem("authUser");
+            if (!savedToken) {
+                setIsLoading(false);
+                return;
             }
-        }
 
-        setIsLoading(false);
+            setToken(savedToken);
+
+            try {
+                const response = await getCurrentUser(savedToken);
+
+                const currentUser = response.user ?? response;
+
+                if (!cancelled) {
+                    setUser(currentUser);
+
+                    localStorage.setItem(
+                        "authUser",
+                        JSON.stringify(currentUser)
+                    );
+                }
+            } catch (error) {
+                if (cancelled) return;
+
+                if (
+                    error.status === 401 ||
+                    error.status === 403
+                ) {
+                    localStorage.removeItem("authToken");
+                    localStorage.removeItem("authUser");
+                    setToken(null);
+                    setUser(null);
+                }
+            } finally {
+                if (!cancelled) {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        checkAuth();
+
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
     const login = useCallback((userData, authToken) => {
-        setUser(userData);
-        setToken(authToken);
-
-        localStorage.setItem(
-            "authToken",
-            authToken
-        );
-
+        localStorage.setItem("authToken", authToken);
         localStorage.setItem(
             "authUser",
             JSON.stringify(userData)
         );
+
+        setToken(authToken);
+        setUser(userData);
     }, []);
 
     const updateUser = useCallback((userData) => {
         setUser((currentUser) => {
+            if (!currentUser) return currentUser;
+
             const updatedUser = {
                 ...currentUser,
                 ...userData,
@@ -71,9 +104,7 @@ export function AuthProvider({ children }) {
         localStorage.removeItem("authUser");
     }, []);
 
-    const isAuthenticated = Boolean(
-        token && user
-    );
+    const isAuthenticated = Boolean(token && user);
 
     return (
         <AuthContext.Provider

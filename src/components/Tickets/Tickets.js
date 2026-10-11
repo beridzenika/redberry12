@@ -6,6 +6,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 
 function Tickets() {
     const [filter, setFilter] = useState("upcoming");
+    const [updatedOrders, setUpdatedOrders] = useState({});
 
     const { token } = useAuthContext();
 
@@ -21,9 +22,47 @@ function Tickets() {
         error: pastError,
     } = useTickets("past", token);
 
+    const handleOrderUpdated = (updatedOrder) => {
+        setUpdatedOrders((previous) => ({
+            ...previous,
+            [updatedOrder.reference]: updatedOrder,
+        }));
+    };
+
+    const allTickets = [
+        ...upcomingTickets,
+        ...pastTickets,
+    ];
+
+    const uniqueTickets = [
+        ...new Map(
+            allTickets.map((ticket) => {
+                const updatedTicket =
+                    updatedOrders[ticket.reference] ?? ticket;
+
+                return [
+                    ticket.reference,
+                    updatedTicket,
+                ];
+            })
+        ).values(),
+    ];
+
+    const upcomingList = uniqueTickets.filter(
+        (ticket) =>
+            !ticket.refundedAt &&
+            ticket.isUpcoming
+    );
+
+    const pastList = uniqueTickets.filter(
+        (ticket) =>
+            Boolean(ticket.refundedAt) ||
+            !ticket.isUpcoming
+    );
+
     const tickets = filter === "upcoming"
-        ? upcomingTickets
-        : pastTickets;
+        ? upcomingList
+        : pastList;
 
     const loading = filter === "upcoming"
         ? upcomingLoading
@@ -85,7 +124,7 @@ function Tickets() {
                         </span>
 
                         <span className="tickets-filter-count text-label-m">
-                            {upcomingTickets.length}
+                            {upcomingList.length}
                         </span>
                     </button>
 
@@ -102,7 +141,7 @@ function Tickets() {
                         </span>
 
                         <span className="tickets-filter-count text-label-m">
-                            {pastTickets.length}
+                            {pastList.length}
                         </span>
                     </button>
                 </div>
@@ -119,8 +158,9 @@ function Tickets() {
                     <div className="ticket-list">
                         {tickets.map((ticket) => (
                             <TicketCard
-                                key={ticket.id}
+                                key={ticket.reference}
                                 ticket={ticket}
+                                onOrderUpdated={handleOrderUpdated}
                             />
                         ))}
                     </div>

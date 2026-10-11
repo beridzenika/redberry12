@@ -12,6 +12,14 @@ import { fetchSessions } from "../services/api";
 
 const DEFAULT_SORT = "price_asc";
 
+const FILTER_PARAMS = [
+    "date",
+    "venue",
+    "format",
+    "language",
+    "timeBand",
+];
+
 const parseArrayParam = (searchParams, key) => {
     const value = searchParams.get(key);
 
@@ -36,13 +44,9 @@ function Sessions() {
             dates: searchParams.get("date")
                 ? [searchParams.get("date")]
                 : [],
-
             venues: parseArrayParam(searchParams, "venue"),
-
             formats: parseArrayParam(searchParams, "format"),
-
             languages: parseArrayParam(searchParams, "language"),
-
             timeBands: parseArrayParam(searchParams, "timeBand"),
         }),
         [searchParams]
@@ -70,27 +74,48 @@ function Sessions() {
     } = useFetch(getSessions, [filters, sort, page]);
 
     const handleFilterChange = (type, values) => {
+        // Clear every filter using the existing URL-based state.
+        if (type === "clear") {
+            setSearchParams((current) => {
+                const next = new URLSearchParams(current);
+
+                FILTER_PARAMS.forEach((param) => {
+                    next.delete(param);
+                });
+
+                next.set("page", "1");
+
+                return next;
+            });
+
+            return;
+        }
+
+        const paramMap = {
+            dates: "date",
+            venues: "venue",
+            formats: "format",
+            languages: "language",
+            timeBands: "timeBand",
+        };
+
+        const param = paramMap[type];
+
+        if (!param) {
+            return;
+        }
+
         setSearchParams((current) => {
             const next = new URLSearchParams(current);
 
-            const paramMap = {
-                dates: "date",
-                venues: "venue",
-                formats: "format",
-                languages: "language",
-                timeBands: "timeBand",
-            };
-
-            const param = paramMap[type];
-
             next.delete(param);
 
-            if (type === "dates") {
-                if (values.length > 0) {
-                    next.set("date", values[0]);
+            if (values.length > 0) {
+                if (type === "dates") {
+                    next.set(param, values[0]);
+                } else {
+                    next.set(param, values.join(","));
                 }
-            } else if (values.length > 0) {
-                next.set(param, values.join(","));
             }
 
             next.set("page", "1");
@@ -104,7 +129,6 @@ function Sessions() {
             const next = new URLSearchParams(current);
 
             next.set("sort", value);
-
             next.set("page", "1");
 
             return next;

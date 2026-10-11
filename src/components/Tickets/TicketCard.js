@@ -1,6 +1,15 @@
+
+import { useState } from "react";
+import { refundOrder } from "../../services/api";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import { formatTicketDate } from "../../utils/dateUtils";
 
-function TicketCard({ ticket }) {
+function TicketCard({ ticket, onOrderUpdated }) {
+    const [refunding, setRefunding] = useState(false);
+    const [refundError, setRefundError] = useState("");
+
+    const { token } = useAuthContext();
+
     const {
         reference,
         totalPrice,
@@ -19,6 +28,41 @@ function TicketCard({ ticket }) {
         movie,
     } = session;
 
+    const handleRefund = async () => {
+        if (!isRefundable || refunding) return;
+
+        const confirmed = window.confirm(
+            `Are you sure you want to refund order ${reference}? ` +
+            "This action cannot be undone."
+        );
+
+        if (!confirmed) return;
+
+        setRefundError("");
+        setRefunding(true);
+
+        try {
+            const response = await refundOrder(reference, token);
+
+            const updatedOrder = response.data ?? response;
+
+            onOrderUpdated(updatedOrder);
+        } catch (error) {
+            if (error.status === 422) {
+                setRefundError(
+                    error.message ||
+                    "This order cannot be refunded. It may already be refunded or within the 2-hour cutoff."
+                );
+            } else {
+                setRefundError(
+                    error.message || "Failed to refund this order. Please try again."
+                );
+            }
+        } finally {
+            setRefunding(false);
+        }
+    };
+
     return (
         <article className="ticket-card">
             <div
@@ -30,9 +74,7 @@ function TicketCard({ ticket }) {
 
             <div className="ticket-content">
                 <header className="ticket-header">
-                    <h3 className="text-h2">
-                        {movie.title}
-                    </h3>
+                    <h3 className="text-h2">{movie.title}</h3>
 
                     <span className="badge-red text-label-s badge-s">
                         {movie.ageRating.code}
@@ -83,12 +125,12 @@ function TicketCard({ ticket }) {
                         SEATS
                     </div>
 
-                    {tickets.map((ticket) => (
+                    {tickets.map((item) => (
                         <span
-                            key={ticket.id}
+                            key={item.id}
                             className="badge-seat text-label-s"
                         >
-                            {ticket.seatCode} · {ticket.ticketType.name}
+                            {item.seatCode} · {item.ticketType.name}
                         </span>
                     ))}
                 </div>
@@ -119,11 +161,23 @@ function TicketCard({ ticket }) {
                     <button
                         type="button"
                         className="btn-gray text-button"
-                        disabled={!isRefundable}
+                        disabled={!isRefundable || refunding}
+                        onClick={handleRefund}
+                        title={
+                            !isRefundable
+                                ? "Refunds are only allowed until 2 hours before the session."
+                                : undefined
+                        }
                     >
-                        Refund
+                        {refunding ? "Refunding..." : "Refund"}
                     </button>
                 </div>
+
+                {refundError && (
+                    <p className="refund-error" role="alert">
+                        {refundError}
+                    </p>
+                )}
             </footer>
         </article>
     );

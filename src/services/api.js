@@ -100,6 +100,11 @@ export const logOutUser = (token) => {
     });
 };
 
+// Authenticated user
+export const getCurrentUser = (token) => {
+    return fetchAuthenticatedData("me", token);
+};
+
 // Authorized
 
 export const updateProfile = ({
@@ -135,6 +140,18 @@ export const fetchAuthenticatedData = (url, token) => {
         method: "GET",
         headers: {
             Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+// notlify
+
+export const notifyMovie = (movieId, token) => {
+    return apiRequest(`/movies/${movieId}/notify`, {
+        method: "POST",
+        headers: {
+            Accept: "*/*",
             Authorization: `Bearer ${token}`,
         },
     });
@@ -207,4 +224,18 @@ export const fetchSessions = async ({
     params.set("page", String(page));
 
     return fetchData(`sessions?${params.toString()}`);
+};
+
+// refund
+export const refundOrder = (orderReference, token) => {
+    return apiRequest(
+        `/orders/${encodeURIComponent(orderReference)}/refund`,
+        {
+            method: "POST",
+            headers: {
+                Accept: "*/*",
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
 };

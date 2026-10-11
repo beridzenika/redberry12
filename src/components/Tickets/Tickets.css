@@ -200,3 +200,24 @@
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+/* refund */
+
+.ticket-footer-content .btn-gray:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.refund-message {
+    width: 100%;
+    margin-top: 8px;
+    color: #777;
+    font-size: 0.875rem;
+}
+
+.refund-error {
+    width: 100%;
+    margin-top: 8px;
+    color: #d32f2f;
+    font-size: 0.875rem;
+}

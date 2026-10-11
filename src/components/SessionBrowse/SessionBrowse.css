@@ -61,10 +61,19 @@
 .session-showtimes {
     display: flex;
     gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    padding-bottom: 8px;
 }
 
 .session-showtime {
     width: 252px;
+    min-width: 252px;
+    max-width: 252px;
     flex: 0 0 252px;
     padding: 15px;
 
@@ -79,8 +88,10 @@
     background: var(--color-bg-card);
 }
 
-.session-showtime-sold {
-    opacity: 0.4;
+.session-browse,
+.session-section {
+    min-width: 0;
+    max-width: 100%;
 }
 
 /* showtime content */
