@@ -12,19 +12,25 @@ export const fetchData = async (url) => {
 
 export const searchFilms = async (query) => {
     if (!query.trim()) return { data: [] };
-    
+
     const response = await fetch(
         `${API_BASE_URL}/search?q=${encodeURIComponent(query)}`
     );
-    if (!response.ok) 
-        throw new Error('Failed to search');
+
+    if (!response.ok) {
+        throw new Error("Failed to search");
+    }
+
     return response.json();
 };
 
-// authentication
+// Authentication
 
 const apiRequest = async (endpoint, options = {}) => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+    const response = await fetch(
+        `${API_BASE_URL}${endpoint}`,
+        options
+    );
 
     const data = await response.json();
 
@@ -35,6 +41,7 @@ const apiRequest = async (endpoint, options = {}) => {
 
         error.status = response.status;
         error.errors = data.errors || {};
+        error.data = data;
 
         throw error;
     }
@@ -63,7 +70,6 @@ export const registerUser = ({
 }) => {
     const formData = new FormData();
 
-    // Avatar is optional. Only append it when a file exists.
     if (avatar instanceof File) {
         formData.append("avatar", avatar);
     }
@@ -71,7 +77,10 @@ export const registerUser = ({
     formData.append("username", username);
     formData.append("email", email);
     formData.append("password", password);
-    formData.append("password_confirmation", confirmPassword);
+    formData.append(
+        "password_confirmation",
+        confirmPassword
+    );
 
     return apiRequest("/register", {
         method: "POST",
@@ -79,9 +88,10 @@ export const registerUser = ({
     });
 };
 
-// log out
+// Log out
+
 export const logOutUser = (token) => {
-    return apiRequest(`/logout`, {
+    return apiRequest("/logout", {
         method: "POST",
         headers: {
             Accept: "application/json",
@@ -90,14 +100,14 @@ export const logOutUser = (token) => {
     });
 };
 
-// authorised
+// Authorized
 
 export const updateProfile = ({
     fullName,
     mobileNumber,
     dateOfBirth,
     preferredVenueId,
-    token
+    token,
 }) => {
     const formData = new FormData();
 
@@ -130,8 +140,35 @@ export const fetchAuthenticatedData = (url, token) => {
     });
 };
 
+// Booking
 
-// filters
+export const fetchFilterOptions = () => {
+    return fetchData("filter-options");
+};
+
+export const createSessionHold = (
+    sessionId,
+    seats,
+    token
+) => {
+    return apiRequest(`/sessions/${sessionId}/holds`, {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+            seats: seats.map((seat) => ({
+                seatId: seat.seatId,
+                ticketType: seat.ticketType,
+            })),
+        }),
+    });
+};
+
+// Filters
+
 export const fetchSessions = async ({
     filters,
     sort,
@@ -156,7 +193,10 @@ export const fetchSessions = async ({
     }
 
     if (filters.timeBands?.length > 0) {
-        params.set("timeBand", filters.timeBands.join(","));
+        params.set(
+            "timeBand",
+            filters.timeBands.join(",")
+        );
     }
 
     params.set("sort", sort);

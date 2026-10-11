@@ -205,7 +205,7 @@ function BookingCheckoutForm({ onSubmit }) {
                     id="booking-full-name"
                     name="fullName"
                     label="Full Name"
-                    placeholder="e.g Text"
+                    placeholder="e.g. Text"
                     value={values.fullName}
                     error={
                         submitted || values.fullName
@@ -223,7 +223,7 @@ function BookingCheckoutForm({ onSubmit }) {
                         name="email"
                         label="Email"
                         type="email"
-                        placeholder="e.g Text"
+                        placeholder="e.g. Text"
                         value={values.email}
                         error={
                             submitted || values.email
@@ -240,7 +240,7 @@ function BookingCheckoutForm({ onSubmit }) {
                         name="mobileNumber"
                         label="Mobile Number"
                         type="tel"
-                        placeholder="e.g Text"
+                        placeholder="e.g. 555 123 456"
                         value={values.mobileNumber}
                         error={
                             submitted || values.mobileNumber
@@ -259,7 +259,7 @@ function BookingCheckoutForm({ onSubmit }) {
                     id="booking-card-number"
                     name="cardNumber"
                     label="Card Number"
-                    placeholder="e.g Text"
+                    placeholder="e.g. 1234 4567 8901 2345"
                     value={values.cardNumber}
                     error={
                         submitted || values.cardNumber
@@ -276,7 +276,7 @@ function BookingCheckoutForm({ onSubmit }) {
                         id="booking-expiry"
                         name="expiry"
                         label="Expiry"
-                        placeholder="e.g Text"
+                        placeholder="e.g. 12/34"
                         value={values.expiry}
                         error={
                             submitted || values.expiry
@@ -292,8 +292,8 @@ function BookingCheckoutForm({ onSubmit }) {
                         id="booking-cvv"
                         name="cvv"
                         label="CVV"
-                        type="password"
-                        placeholder="e.g Text"
+                        type="text"
+                        placeholder="e.g. 123"
                         value={values.cvv}
                         error={
                             submitted || values.cvv

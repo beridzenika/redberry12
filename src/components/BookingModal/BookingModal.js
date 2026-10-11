@@ -8,6 +8,7 @@ import ModalOverlay from "../Modal/ModalOverlay";
 import BookingSessionDetails from "./BookingSessionDetails";
 import BookingSeatMap from "../BookingSeatMap/BookingSeatMap";
 import BookingSelectionSummary from "./BookingSelectionSummary";
+import BookingCheckoutSummary from "../BookingCheckout/BookingCheckoutSummary";
 import BookingCheckoutForm from "../BookingCheckout/BookingCheckoutForm";
 
 import "./BookingModal.css";
@@ -341,24 +342,27 @@ function BookingModal() {
                         aria-hidden="true"
                     />
 
-                    <BookingSelectionSummary
-                        MAX_SEATS={MAX_SEATS}
-                        selectedSeats={selectedSeats}
-                        subtotal={subtotal}
-                        childAllowed={childAllowed}
-                        onTicketTypeChange={handleTicketTypeChange}
-                        onRemoveSeat={handleRemoveSeat}
-                        onNext={
-                            currentStep === "seats"
-                                ? handleNext
-                                : handleBackToSeats
-                        }
-                        actionLabel={
-                            currentStep === "seats"
-                                ? "Next: Checkout"
-                                : "Back to Seats"
-                        }
-                    />
+                    {currentStep === "seats" ? (
+                        <BookingSelectionSummary
+                            MAX_SEATS={MAX_SEATS}
+                            selectedSeats={selectedSeats}
+                            subtotal={subtotal}
+                            childAllowed={childAllowed}
+                            onTicketTypeChange={handleTicketTypeChange}
+                            onRemoveSeat={handleRemoveSeat}
+                            onNext={handleNext}
+                        />
+                    ) : (
+                        <BookingCheckoutSummary
+                            session={session}
+                            selectedSeats={selectedSeats}
+                            subtotal={subtotal}
+                            onCompleteOrder={() => handleCheckoutSubmit({
+                                // Replace with the customer details collected
+                                // by your checkout form when wiring up the final flow.
+                            })}
+                        />
+                    )}
                 </div>
             </article>
         </ModalOverlay>

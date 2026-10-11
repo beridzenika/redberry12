@@ -13,3 +13,26 @@
     gap: 16px;
     align-items: start;
 }
+
+
+/* summary */
+.checkout-summary-movie {
+    width: 100%;
+    background: var(--color-bg-card);
+    padding: 16px;
+    border-radius: 12px;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.checkout-summary-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.checkout-summary-row {
+    display: flex;
+    justify-content: space-between;
+}
