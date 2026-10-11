@@ -66,7 +66,6 @@ export function useCheckout({ token, onSuccess, onConflict }) {
                             "Please correct the highlighted fields."
                         );
                     } else {
-                        // A 422 without field errors means the hold expired.
                         setSubmitError(
                             "Your hold time expired. Please re-select your seats."
                         );

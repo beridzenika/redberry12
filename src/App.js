@@ -10,6 +10,7 @@ import MoviePage from "./pages/MoviePage";
 import LoginModal from "./components/Forms/LoginModal";
 import SigninModal from "./components/Forms/SigninModal";
 import BookingModal from "./components/BookingModal/BookingModal";
+import ConfirmationModal from "./components/ConfirmationModal/ConfirmationModal";
 
 import RequireAuth from "./components/RequireAuth/RequireAuth";
 
@@ -50,6 +51,7 @@ function App() {
             <LoginModal />
             <SigninModal />
             <BookingModal />
+            <ConfirmationModal />
         </div>
     );
 }

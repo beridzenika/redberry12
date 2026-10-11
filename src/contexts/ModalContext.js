@@ -7,13 +7,19 @@ export function ModalProvider({ children }) {
         login: false,
         signin: false,
         booking: false,
+        confirmation: false,
     });
 
     const [bookingSessionId, setBookingSessionId] = useState(null);
+    const [confirmationData, setConfirmationData] = useState(null);
 
     const openModal = useCallback((modalName, payload) => {
         if (modalName === "booking") {
             setBookingSessionId(payload?.sessionId ?? null);
+        }
+
+        if (modalName === "confirmation") {
+            setConfirmationData(payload?.order ?? payload ?? null);
         }
 
         setModals((prev) => ({
@@ -31,6 +37,10 @@ export function ModalProvider({ children }) {
         if (modalName === "booking") {
             setBookingSessionId(null);
         }
+
+        if (modalName === "confirmation") {
+            setConfirmationData(null);
+        }
     }, []);
 
     const closeAllModals = useCallback(() => {
@@ -38,9 +48,11 @@ export function ModalProvider({ children }) {
             login: false,
             signin: false,
             booking: false,
+            confirmation: false,
         });
 
         setBookingSessionId(null);
+        setConfirmationData(null);
     }, []);
 
     return (
@@ -51,6 +63,7 @@ export function ModalProvider({ children }) {
                 closeModal,
                 closeAllModals,
                 bookingSessionId,
+                confirmationData,
             }}
         >
             {children}

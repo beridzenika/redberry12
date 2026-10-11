@@ -236,14 +236,17 @@ function Filters ({
                 ))}
 
                 <div className="filter-footer">
-                    <button
-                        type="button"
-                        className="text-label-s btn-border clear-filter-btn"
-                        onClick={handleClearFilters}
-                        disabled={activeFilterCount === 0}
-                    >
-                        Clear filters
-                    </button>
+                    {activeFilterCount > 0 ? 
+                    (
+                        <button
+                            type="button"
+                            className="text-label-s btn-border clear-filter-btn"
+                            onClick={handleClearFilters}
+                            disabled={activeFilterCount === 0}
+                        >
+                            Clear filters
+                        </button>
+                    ) : ''}
                     <span className="text-body-s text-gray">
                         {activeFilterCount}{" "}
                         {activeFilterCount === 1

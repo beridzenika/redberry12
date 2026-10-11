@@ -21,7 +21,12 @@ import BookingCheckoutForm from "../BookingCheckout/BookingCheckoutForm";
 import "./BookingModal.css";
 
 function BookingModal() {
-    const { modals, closeModal, bookingSessionId } = useModal();
+    const {
+        modals,
+        openModal,
+        closeModal,
+        bookingSessionId,
+    } = useModal();
     const { user, token } = useAuthContext();
 
     const {
@@ -257,7 +262,9 @@ function BookingModal() {
         onSuccess: (result) => {
             closeModal("booking");
 
-            console.log("Order created successfully:", result);
+            openModal("confirmation", {
+                order: result,
+            });
         },
 
         onConflict: (message) => {
